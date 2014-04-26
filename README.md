@@ -20,7 +20,10 @@ Initial setup
     sudo modprobe w1_gpio
     sudo modprobe w1_therm
     sudo modprobe usbserial
-    # or add permanently to /etc/modules
+    # or better yet: add permanently to /etc/modules
+
+    # generate a gammu configuration and store it into .gammurc in home dir (usb modem must be connected)
+    gammu-detect > ~/.gammurc
 
     # add python script to root crontab (root is required to read/write GPIO channels)
     # sudo crontab -e
