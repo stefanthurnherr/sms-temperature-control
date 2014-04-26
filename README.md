@@ -5,9 +5,9 @@ Required hardware
 -----------------
 * Raspberry Pi with an sd card (4GB) and running raspbian image
 * Temperature sensor
-* Some cables, breadboard, resistances, multimeter
+* Some cables, breadboard, resistances, LEDs (for testing purposes), multimeter
 * relay (controlled by 5V connection, able to handle 220V circuit)
-* 3G usb modem
+* 3G usb modem with valid SIM card
 * USB hub (powered)
 
 
