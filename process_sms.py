@@ -4,13 +4,16 @@
 import sys
 import datetime
 import os
+import ConfigParser
 
 from temp import temperaturereader
 from sms import smsfetcher
 from sms import smssender
 from relay import powerswitcher
 
-MY_NUMBER = <insert-3g-modem-mobile-number-here>
+config = ConfigParser.SafeConfigParser()
+config.read('my.cfg')
+MY_NUMBER = config.get('Phone', 'number')
 
 
 now = datetime.datetime.now()
