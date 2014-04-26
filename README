@@ -1,6 +1,8 @@
-= How to get started =
+How to get started
+==================
 
-== Required hardware ==
+Required hardware
+-----------------
 * Raspberry Pi with an sd card (4GB) and running raspbian image
 * Temperature sensor
 * Some cables, breadboard, resistances, multimeter
@@ -9,8 +11,8 @@
 * USB hub (powered)
 
 
-== Initial setup ==
-
+Initial setup
+-------------
 # install gammu (python library to send/read sms)
 sudo apt-get install gammu
 
@@ -34,8 +36,8 @@ sudo modprobe usbserial
 # *  *  *  *  *  command to be executed
 #
 
-== Some helpful commands when trying out gammu ==
-
+Some helpful commands when trying out gammu
+-------------------------------------------
 # waiting for PIN?
 gammu getsecuritystatus
 
