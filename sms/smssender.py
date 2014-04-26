@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import gammu
+import ConfigParser
 
 
 GAMMU_CONFIG_PATH = '/home/pi/.gammurc'
@@ -25,6 +26,10 @@ def send_sms(text, number):
 
 if __name__ == "__main__":
     hello_text = "Raspberry Pi says: Hi! (a gammu-python test sms)"
-    number = <insert-sender-mobile-number-here> 
-    send_sms(hello_text, number)
+    
+    config = ConfigParser.SafeConfigParser()
+    config.read('my.cfg')
+    phone_number = config.get('Phone', 'number')
+    
+    send_sms(hello_text, phone_number)
 
