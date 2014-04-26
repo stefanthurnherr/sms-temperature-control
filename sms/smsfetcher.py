@@ -51,7 +51,7 @@ def get_next_sms(delete_message):
 
         for i,deleteSms in enumerate(sms):
             if delete_message:
-                with open('/home/pi/python/log/sms-delete.log', 'a') as sms_log_file:
+                with open('/home/pi/sms-temperature-control/log/sms-delete.log', 'a') as sms_log_file:
                     separator = '   '
                     now_text = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     received_timestamp = sms[0]['DateTime'].strftime("%Y-%m-%d %H:%M:%S")
