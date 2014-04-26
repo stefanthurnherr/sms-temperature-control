@@ -12,7 +12,7 @@ from sms import smssender
 from relay import powerswitcher
 
 config = ConfigParser.SafeConfigParser()
-config.read('my.cfg')
+config.read('/home/pi/sms-temperature-control/my.cfg')
 MY_NUMBER = config.get('Phone', 'number')
 
 

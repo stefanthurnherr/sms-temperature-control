@@ -14,7 +14,7 @@ Required hardware
 Initial setup
 -------------
     #install gammu (python library to send/read sms)
-    sudo apt-get install gammu
+    sudo apt-get install gammu python-gammu
 
     # install some kernel modules required for temp sensor and 3G usb stick
     sudo modprobe w1_gpio
