@@ -16,11 +16,11 @@ Initial setup
 #install gammu (python library to send/read sms)
 sudo apt-get install gammu
 
-## install some kernel modules required for temp sensor and 3G usb stick
-sudo modprobe w1_gpio
-sudo modprobe w1_therm
-sudo modprobe usbserial
-## or add permanently to /etc/modules
+ # install some kernel modules required for temp sensor and 3G usb stick
+>sudo modprobe w1_gpio
+>sudo modprobe w1_therm
+>sudo modprobe usbserial
+ # or add permanently to /etc/modules
 
 # add python script to root crontab (root is required to read/write GPIO channels)
 # sudo crontab -e
