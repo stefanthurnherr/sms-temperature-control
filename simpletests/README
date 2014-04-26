@@ -1,0 +1,2 @@
+# run these scripts from the top-level directory (where simpletests/ is located) with the following command:
+python -m simpletests.<scriptname>.py
