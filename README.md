@@ -4,9 +4,9 @@ How to get started
 Required hardware
 -----------------
 * Raspberry Pi with an sd card (4GB) and running raspbian image
-* Temperature sensor
+* Temperature sensor (I used DS18B20 with cable and waterproof)
 * Some cables, breadboard, resistances, LEDs (for testing purposes), multimeter
-* relay (controlled by 5V connection, able to handle 220V circuit)
+* relay (I used a [5V 10A250VAC 2-channel relay module](http://www.ebay.co.uk/itm/5V-2-4-8-Channel-Electronic-Relay-Module-Shield-for-Arduino-ARM-PIC-AVR-DSP-10A-/400514325341?var=670109806408))
 * 3G usb modem with valid SIM card
 * USB hub (powered)
 
