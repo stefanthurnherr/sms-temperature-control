@@ -15,20 +15,18 @@ config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 MY_NUMBER = config.get('Phone', 'number')
 
+sms_messages = smsfetcher.delete_get_next_sms()
 
 now = datetime.datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
 absolute_script_path = os.path.abspath(__file__)
-print "{0} start sms processing by {1}".format(now_text, absolute_script_path)
 
-
-sms_messages = smsfetcher.delete_get_next_sms()
 
 if not sms_messages:
-    print "  no sms found - bye."
+    print "{0} No sms found by {1} - bye.".format(now_text, absolute_script_path)
     sys.exit()
-elif len(sms_messages) > 1:
-    print "  found sms consisting of {0} parts - only the first part will be considered.".format(len(sms_messages))
+
+print "{0} Start sms processing by {1}".format(now_text, absolute_script_path)
 
 sms = sms_messages[0]
 
@@ -41,6 +39,10 @@ print "  got sms message from {0}: {1}".format(sender_number, sender_message)
 if MY_NUMBER in sender_number:
     print "  got sms from my own number - not responding in order to prevent infinite loop. Bye!"
     sys.exit()
+
+if len(sms_messages) > 1:
+    print "  found sms consisting of {0} parts - only the first part will be considered.".format(len(sms_messages))
+
 
 response_message = None
 

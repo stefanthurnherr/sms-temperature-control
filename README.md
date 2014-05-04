@@ -7,7 +7,8 @@ Required hardware
 * Temperature sensor (I used DS18B20 with cable and waterproof)
 * Some cables, breadboard, resistances, LEDs (for testing purposes), multimeter
 * relay (I used a [5V 10A250VAC 2-channel relay module](http://www.ebay.co.uk/itm/5V-2-4-8-Channel-Electronic-Relay-Module-Shield-for-Arduino-ARM-PIC-AVR-DSP-10A-/400514325341?var=670109806408))
-* 3G usb modem with valid SIM card
+* GSM/3G usb modem, unlocked (I used [gsmliberty.net](http://www.gsmliberty.net) to unlock mine)
+* valid SM card (prepaid, preferably refillable via internet)
 * USB hub (powered)
 
 
