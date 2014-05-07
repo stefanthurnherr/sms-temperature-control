@@ -50,7 +50,7 @@ if sender_message_raw and sender_message_raw.lower().startswith('temp'):
     temp_raw = temperaturereader.read_celsius()
     temp = round(temp_raw, 1)
     print "  responding with temperature: {0} Celsius.".format(temp)
-    response_message = "Hi! Current temperature here is {0} Celsius.".format(temp)
+    response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_text)
 
 elif sender_message_raw and sender_message_raw.lower().startswith('power'):
     powerswitcher.setup(warnings=False)
@@ -72,9 +72,9 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
     
     print "  responding with (updated) power status: {0}.".format(power_status)
     if requested_state:
-        response_message = "Hi! Power has been switched {0}.".format(power_status)
+        response_message = "Hi! Power has been switched {0} ({1}).".format(power_status, now_text)
     else:
-        response_message = "Hi! Power is currently {0}.".format(power_status)
+        response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_text)
 
 else:
     print "  not recognized, answering with help message."
