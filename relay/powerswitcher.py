@@ -11,6 +11,10 @@ GPIO_MODE = GPIO.BCM
 CHANNEL_BCM_ID = 22
 
 
+def init_pins(warnings=False):
+    setup(warnings)
+    set_status_off()
+
 def get_status_string_safe(warnings=False):
     setup(warnings) 
     return get_status_string()

@@ -28,8 +28,9 @@ Initial setup
 
     # add python script to root crontab (root is required to read/write GPIO channels)
     # sudo crontab -e
-    # */15 * * * * /usr/bin/python /home/pi/sms-temperature-control/say_hello.py >> /tmp/crontab.stdout 2>&1
-    # */01 * * * * /usr/bin/python /home/pi/sms-temperature-control/process_sms.py >> /tmp/crontab.stdout 2>&1
+    # */15 * * * * /usr/bin/python /home/pi/sms-temperature-control/say_hello.py >> /home/pi/sms-temperature-control/log/crontab.stdout 2>&1
+    # */01 * * * * /usr/bin/python /home/pi/sms-temperature-control/process_sms.py >> /home/pi/sms-temperature-control/log/crontab.stdout 2>&1
+    # @reboot      /usr/bin/python /home/pi/sms-temperature-control/run_once_after_boot.py >> /home/pi/sms-temperature-control/log/crontab.stdout 2>&1
     #
     # .---------------- minute (0 - 59) 
     # |  .------------- hour (0 - 23)
