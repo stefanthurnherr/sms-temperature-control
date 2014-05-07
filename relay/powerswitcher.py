@@ -11,17 +11,35 @@ GPIO_MODE = GPIO.BCM
 CHANNEL_BCM_ID = 22
 
 
+def get_status_string_safe(warnings=False):
+    setup(warnings) 
+    return get_status_string()
+
+def set_status_on_safe(warnings=False):
+    setup(warnings) 
+    if get_status() == 1:
+        set_status_on()
+
+def set_status_off_safe(warnings=False):
+    setup(warnings) 
+    if get_status() == 0:
+        set_status_off()
+
+#private
 def setup(warnings=True):
     GPIO.setmode(GPIO_MODE)
     GPIO.setwarnings(warnings)
     GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
 
-def tearDown():
+#private
+def tear_down():
     GPIO.cleanup(CHANNEL_BCM_ID)
 
+#private
 def get_status():
     return GPIO.input(CHANNEL_BCM_ID)
 
+#private
 def get_status_string():
     power_status = get_status()
     if power_status == 1:
@@ -29,13 +47,16 @@ def get_status_string():
     else:
         return'ON'
 
+#private
 def set_status_on():
-    return setChannelValueTo(GPIO.LOW)
+    return set_channel_value_to(GPIO.LOW)
 
+#private
 def set_status_off():
-    return setChannelValueTo(GPIO.HIGH)
+    return set_channel_value_to(GPIO.HIGH)
 
-def setChannelValueTo(gpioValue):
+#private
+def set_channel_value_to(gpioValue):
     GPIO.output(CHANNEL_BCM_ID, gpioValue)
     return get_status()
 
@@ -50,7 +71,7 @@ if __name__ == "__main__":
     iteration = 0
     max_iteration = 3
     while iteration < max_iteration:
-        print "alternation {0}/{1}".format(iteration, max_iteration)
+        print "iteration {0}/{1}".format(iteration, max_iteration)
         set_status_on()
         print "  set to on - value now is {0}".format(get_status())
         time.sleep(intervalSeconds)
@@ -59,4 +80,4 @@ if __name__ == "__main__":
         time.sleep(intervalSeconds)
         iteration = iteration + 1
 
-    tearDown()
+    tear_down()
