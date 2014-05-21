@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import datetime
+from datetime import datetime
+import time
 import os
 import ConfigParser
 
@@ -15,12 +16,19 @@ config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 MY_NUMBER = config.get('Phone', 'number')
 
-sms_messages = smsfetcher.delete_get_next_sms()
-
-now = datetime.datetime.now()
+now = datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
-absolute_script_path = os.path.abspath(__file__)
 
+time_before = time.time()
+try:
+    sms_messages = smsfetcher.delete_get_next_sms()
+except gammu.ERR_TIMEOUT:
+    timeout_after_time = time.time() - time_before
+    print "{0} Got exception after {1} seconds while trying to fetch/delete next sms.".format(now_text, timeout_after_time)
+    raise # re-raise exception so we get the stacktrace to stderr
+
+
+absolute_script_path = os.path.abspath(__file__)
 
 if not sms_messages:
     print "{0} No sms found by {1} - bye.".format(now_text, absolute_script_path)
