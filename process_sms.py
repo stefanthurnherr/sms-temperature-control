@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 import os
 import ConfigParser
+import gammu # for exception handling only
 
 from temp import temperaturereader
 from sms import smsfetcher
