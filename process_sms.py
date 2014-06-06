@@ -49,7 +49,7 @@ print "  got sms message from {0}: {1}".format(sender_number, sender_message)
 if MY_NUMBER in sender_number:
     print "  got sms from my own number - not responding in order to prevent infinite loop. Bye!"
     sys.exit()
-elif BLACKLIST_SENDERS:
+elif BLACKLIST_SENDERS: # empty strings are false
    for blacklist_sender in BLACKLIST_SENDERS.split(","): 
         if blacklist_sender in sender_number: 
             print "  this sender is in blacklist (matched '{0}') - ignoring. Bye!".format(blacklist_sender)
