@@ -4,3 +4,7 @@ number=0123456789
 [Administrator]
 number=+46987654321
 notify_startup_sms=on
+
+[SmsProcessing]
+# comma-separated ignore list of senders (or substrings of senders, alphanumerical)
+blacklist_senders=

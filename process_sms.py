@@ -16,15 +16,16 @@ from relay import powerswitcher
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 MY_NUMBER = config.get('Phone', 'number')
+BLACKLIST_SENDERS = config.get('SmsProcessing', 'blacklist_senders')
 
 now = datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
 
-time_before = time.time()
+time_before_fetch = time.time()
 try:
     sms_messages = smsfetcher.delete_get_next_sms()
 except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST):
-    timeout_after_time = time.time() - time_before
+    timeout_after_time = time.time() - time_before_fetch
     print "{0} Got exception after {1} seconds while trying to fetch/delete next sms.".format(now_text, timeout_after_time)
     raise # re-raise exception so we get the stacktrace to stderr
 
@@ -48,6 +49,11 @@ print "  got sms message from {0}: {1}".format(sender_number, sender_message)
 if MY_NUMBER in sender_number:
     print "  got sms from my own number - not responding in order to prevent infinite loop. Bye!"
     sys.exit()
+elif BLACKLIST_SENDERS:
+   for blacklist_sender in BLACKLIST_SENDERS.split(","): 
+        if blacklist_sender in sender_number: 
+            print "  this sender is in blacklist (matched '{0}') - ignoring. Bye!".format(blacklist_sender)
+            sys.exit()
 
 if len(sms_messages) > 1:
     print "  found sms consisting of {0} parts - only the first part will be considered.".format(len(sms_messages))
@@ -88,5 +94,12 @@ else:
 
 #response_message = response_message + " Your message from {0} was: \"{1}\"".format(sender_datetime, sender_message)
 
-smssender.send_sms(response_message, sender_number)
+
+time_before_send = time.time()
+try:
+    smssender.send_sms(response_message, sender_number)
+except (gammu.ERR_UNKNOWN):
+    timeout_after_time = time.time() - time_before_send
+    print "{0} Got exception after {1} seconds while trying to send sms.".format(now_text, timeout_after_time)
+    raise # re-raise exception so we get the stacktrace to stderr
 
