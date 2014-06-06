@@ -32,7 +32,8 @@ except gammu.ERR_TIMEOUT:
 absolute_script_path = os.path.abspath(__file__)
 
 if not sms_messages:
-    print "{0} No sms found by {1} - bye.".format(now_text, absolute_script_path)
+    # would write a log message every minute even if no sms found 
+    #print "{0} No sms found by {1} - bye.".format(now_text, absolute_script_path)
     sys.exit()
 
 print "{0} Start sms processing by {1}".format(now_text, absolute_script_path)
