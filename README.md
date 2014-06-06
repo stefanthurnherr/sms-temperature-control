@@ -10,7 +10,7 @@ Required hardware
 * GSM/3G usb modem, unlocked (I used [gsmliberty.net](http://www.gsmliberty.net) to unlock mine)
 * valid SM card (prepaid, preferably refillable via internet)
 * USB hub (powered)
-
+* Maybe some angled USB cables to save some space when packaging the whole thing (I bought one [here](http://www.angledcables.com/cables.html))
 
 Initial setup
 -------------
