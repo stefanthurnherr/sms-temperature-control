@@ -56,7 +56,8 @@ def get_next_sms(delete_message):
                     now_text = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     received_timestamp = sms[0]['DateTime'].strftime("%Y-%m-%d %H:%M:%S")
                     sender_number = sms[0]['Number']
-                    sender_message = repr(sms[0]['Text'])
+                    sender_number = sender_number.rjust(15) 
+		    sender_message = repr(sms[0]['Text'])
                     sms_log_file.write('\n' + now_text);
                     sms_log_file.write(separator + received_timestamp);
                     sms_log_file.write(separator + sender_number);
