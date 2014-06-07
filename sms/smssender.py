@@ -3,9 +3,7 @@
 
 import gammu
 import ConfigParser
-
-
-GAMMU_CONFIG_PATH = '/home/pi/.gammurc'
+import _gammuhelper
 
 
 def send_sms(text, number):
@@ -17,10 +15,9 @@ def send_sms(text, number):
         'Number': number,          #The phone number
     }
 
-    gammu_sm = gammu.StateMachine()
-    gammu_sm.ReadConfig(Filename = GAMMU_CONFIG_PATH)
-    gammu_sm.Init()                    #Connect to the phone
-    gammu_sm.SendSMS(SMS)              #Send the SMS
+    gammu_sm = _gammuhelper.get_init_state_machine()
+    
+    gammu_sm.SendSMS(SMS)
 
 
 

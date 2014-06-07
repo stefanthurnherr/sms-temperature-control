@@ -4,9 +4,7 @@
 import gammu
 import sys
 import datetime
-
-
-GAMMU_CONFIG_PATH='/home/pi/.gammurc'
+import _gammuhelper
 
 
 def delete_get_next_sms():
@@ -15,21 +13,7 @@ def delete_get_next_sms():
 
 def get_next_sms(delete_message):
 
-    # Create object for talking with phone
-    sm = gammu.StateMachine()
-
-    # Optionally load config file as defined by first parameter
-    if len(sys.argv) >= 2:
-        # Read the configuration from given file
-        sm.ReadConfig(Filename = sys.argv[1])
-        # Remove file name from args list
-        del sys.argv[1]
-    else:
-        # Read the configuration ('~/.gammurc' if not specified)
-        sm.ReadConfig(Filename = GAMMU_CONFIG_PATH)
-
-    # Connect to the phone
-    sm.Init()
+    sm = _gammuhelper.get_init_state_machine()
 
     # Get sms status
     smsStatus = sm.GetSMSStatus()
