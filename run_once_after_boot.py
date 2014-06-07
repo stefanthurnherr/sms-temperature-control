@@ -14,12 +14,14 @@ power_status = powerswitcher.get_status_string_safe()
 now = datetime.datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
 
+print "{0} Successfully initialized pins after (re-)boot, power is now {1} ...".format(now_text, power_status)
+
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 admin_phone_number = config.get('Administrator', 'number')
 admin_notify_sms = config.getboolean('Administrator', 'notify_startup_sms')
 
-print "{0} Successfully initialized pins after boot, power is now {1}. Sending confirmation sms to admin ({2})? {3}.".format(now_text, power_status, admin_phone_number, admin_notify_sms)
+print "{0}   Sending confirmation sms to admin ({1})? {2}.".format(now_text, admin_phone_number, admin_notify_sms)
 
 if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
