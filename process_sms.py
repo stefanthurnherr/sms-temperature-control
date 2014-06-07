@@ -9,13 +9,17 @@ import ConfigParser
 import gammu # for exception handling only
 
 from temp import temperaturereader
-from sms import smsfetcher
-from sms import smssender
+from sms import SmsFetcher
+from sms import SmsSender
 from relay import powerswitcher
 
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
+
 MY_NUMBER = config.get('Phone', 'number')
+GAMMU_CONFIG_FILE = config.get('Phone', 'gammu_config_file')
+GAMMU_CONFIG_SECTION = config.get('Phone', 'gammu_config_section')
+
 BLACKLIST_SENDERS = config.get('SmsProcessing', 'blacklist_senders')
 
 now = datetime.now()
@@ -23,7 +27,8 @@ now_text = now.strftime("%Y-%m-%d %H:%M:%S")
 
 time_before_fetch = time.time()
 try:
-    sms_messages = smsfetcher.delete_get_next_sms()
+    sms_fetcher = SmsFetcher(GAMMU_CONFIG_FILE, GAMMU_CONFIG_SECTION) 
+    sms_messages = sms_fetcher.delete_get_next_sms()
 except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST):
     timeout_after_time = time.time() - time_before_fetch
     print "{0} Got exception after {1} seconds while trying to fetch/delete next sms.".format(now_text, timeout_after_time)
@@ -97,7 +102,8 @@ else:
 
 time_before_send = time.time()
 try:
-    smssender.send_sms(response_message, sender_number)
+    sms_sender = SmsSender(GAMMU_CONFIG_FILE, GAMMU_CONFIG_SECTION) 
+    sms_sender.send_sms(response_message, sender_number)
 except (gammu.ERR_UNKNOWN):
     timeout_after_time = time.time() - time_before_send
     print "{0} Got exception after {1} seconds while trying to send sms.".format(now_text, timeout_after_time)

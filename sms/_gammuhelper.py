@@ -2,16 +2,12 @@
 # -*- coding: UTF-8 -*-
 
 import gammu
-import ConfigParser
 
 
-GAMMU_CONFIG_PATH = '/home/pi/.gammurc'
-
-
-def get_init_state_machine():
+def get_init_state_machine(gammu_config_file, gammu_config_section):
     gammu_sm = gammu.StateMachine()
-    gammu_sm.ReadConfig(Filename = GAMMU_CONFIG_PATH)
-    gammu_sm.Init()                    #Connect to the phone
+    gammu_sm.ReadConfig(Section = int(gammu_config_section), Filename = gammu_config_file)
+    gammu_sm.Init()
     return gammu_sm
 
 

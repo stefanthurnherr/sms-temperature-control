@@ -1,5 +1,7 @@
 [Phone]
 number=0123456789
+gammu_config_file=/home/pi/.gammurc
+gammu_config_section=1
 
 [Administrator]
 number=+46987654321
