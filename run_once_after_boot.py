@@ -5,7 +5,7 @@ import datetime
 import ConfigParser
 
 from relay import powerswitcher
-from sms import smssender
+from sms import SmsSender
 
 
 powerswitcher.init_pins()
@@ -22,5 +22,9 @@ admin_notify_sms = config.getboolean('Administrator', 'notify_startup_sms')
 print "{0} Successfully initialized pins after boot, power is now {1}. Sending confirmation sms to admin ({2})? {3}.".format(now_text, power_status, admin_phone_number, admin_notify_sms)
 
 if admin_notify_sms:
-	reboot_message = "Hi Admin! Restart completed at {0}, power is now {1}.".format(now_text, power_status)
-	smssender.send_sms(reboot_message, admin_phone_number)
+    gammu_config_file = config.get('Phone', 'gammu_config_file')
+    gammu_config_section = config.get('Phone', 'gammu_config_section')
+
+    reboot_message = "Hi Admin! Restart completed at {0}, power is now {1}.".format(now_text, power_status)
+    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
+    sms_sender.send_sms(reboot_message, admin_phone_number)
