@@ -3,26 +3,37 @@
 
 import datetime
 import time
-import ConfigParser
+import sys
 import subprocess
+
+import ConfigParser
 
 from relay import powerswitcher
 from sms import SmsSender
 
 
-powerswitcher.init_pins()
-power_status = powerswitcher.get_status_string_safe()
-
 now = datetime.datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
+
+print "{0} -------------------REBOOT-----------------------".format(now_text)
+
+powerswitcher.init_pins()
+power_status = powerswitcher.get_status_string_safe()
 
 print "{0} Successfully initialized pins after (re-)boot, power is now {1} ...".format(now_text, power_status)
 
 # FIXME: only run the usb_modeswitch stuff below if required according to lsusb
+print "----------------------<lsusb>-----------------------"
+sys.stdout.flush()
+lsusb_return_code = subprocess.call("lsusb")
+print "----------------------</lsusb>----------------------"
 
 # run usb_modeswitch to ensure 3G modem is in modem state (and not in storage mode)
 time.sleep(10) # wait until modem is connected
+print "-----------------<usb_modeswitch>-------------------"
+sys.stdout.flush()
 return_code = subprocess.call("/usr/sbin/usb_modeswitch -c /etc/usb_modeswitch.conf", shell=True)
+print "-----------------</usb_modeswitch>------------------"
 print "{0}    Ran usb_modeswitch, got return code {1}".format(now_text, return_code)
 if int(return_code) == 0:
     time.sleep(60) # sleep a while after disconnect to give modem time to (re-)connect
