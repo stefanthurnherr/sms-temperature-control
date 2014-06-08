@@ -2,6 +2,12 @@
 number=0123456789
 gammu_config_file=/home/pi/.gammurc
 gammu_config_section=1
+# modem identifier specified as follows: vendorId:productId
+# most 3G usb modems are USB 'flip-flop' devices, e.g. they have an
+# usb storage device mode and a modem mode. The productId is different for these two
+# modes, and it is important that you specify the productId of the modem mode here.
+# example for a ZTE MF190 3G modem: 19d2:0017 (and 19d2:2000 would be the storage mode)
+modem_identifier=
 
 [Administrator]
 number=+46987654321
