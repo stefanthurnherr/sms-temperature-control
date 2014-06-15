@@ -29,7 +29,7 @@ time_before_fetch = time.time()
 try:
     sms_fetcher = SmsFetcher(GAMMU_CONFIG_FILE, GAMMU_CONFIG_SECTION) 
     sms_messages = sms_fetcher.delete_get_next_sms()
-except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST):
+except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
     timeout_after_time = time.time() - time_before_fetch
     print "{0} Got exception after {1} seconds while trying to fetch/delete next sms.".format(now_text, timeout_after_time)
     raise # re-raise exception so we get the stacktrace to stderr
