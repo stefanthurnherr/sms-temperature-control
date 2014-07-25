@@ -45,6 +45,7 @@ else:
 
 sys.stdout.flush()
 
+
 admin_phone_number = config.get('Administrator', 'number')
 admin_notify_sms = config.getboolean('Administrator', 'notify_startup_sms')
 
@@ -53,6 +54,9 @@ if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
     gammu_config_section = config.get('Phone', 'gammu_config_section')
 
-    reboot_message = "Hi Admin! Restart completed at {0}, power is now {1}.".format(now_text, power_status)
     sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
+    network_datetime = sms_sender.get_network_datetime()
+    system_datetime = now_text
+
+    reboot_message = "Hi Admin! Restart completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status)
     sms_sender.send_sms(reboot_message, admin_phone_number)

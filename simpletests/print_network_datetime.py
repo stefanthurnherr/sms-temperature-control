@@ -15,14 +15,9 @@ sm.ReadConfig()
 sm.Init()
 
 # Reads network information from phone
-netinfo = sm.GetNetworkInfo()
+dateTimeInfo = sm.GetDateTime()
 
 # Print information
-
-print 'Network arrak: %s' % netinfo
-print 'Network name: %s' % netinfo['NetworkName']
-print 'Network code: %s' % netinfo['NetworkCode']
-print 'LAC: %s' % netinfo['LAC']
-print 'CID: %s' % netinfo['CID']
+print 'Current network date/time: %s' % dateTimeInfo
 
 print 'Bye!'

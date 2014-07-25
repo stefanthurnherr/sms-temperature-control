@@ -19,6 +19,9 @@ class SmsSender(object):
         }
         self.gammu_state_machine.SendSMS(SMS)
 
+    def get_network_datetime(self):
+        return self.gammu_state_machine.GetDateTime()
+
 
 if __name__ == "__main__":
     hello_text = "Raspberry Pi says: Hi! (a gammu-python test sms)"

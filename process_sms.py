@@ -33,7 +33,7 @@ try:
     sms_messages = sms_fetcher.delete_get_next_sms()
 except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
     timeout_after_time = time.time() - time_before_fetch
-    print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength:{2}%).".format(now_text, timeout_after_time, signal_strength_percentage)
+    print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(now_text, timeout_after_time, signal_strength_percentage)
     raise # re-raise exception so we get the stacktrace to stderr
 
 absolute_script_path = os.path.abspath(__file__)
