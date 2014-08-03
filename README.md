@@ -74,4 +74,7 @@ How to install a python module
     # sudo python setup.py install
     # (alternative: sudo pip install rpi.gpio)
 
-
+Ideas to be implemented in the future
+-------------------------------------
+* Use gammu's USSD interface to warn Administrator if balance (for prepaid SIM cards) is low
+* Sync system/modem time with cellular network time by sending an SMS with a unique identifier to myself and taking Sent/Received time (?) from SMS (remember that RPi doesn't have a battery clock, and gammu's GetDateTime() doesn't seem to return cellular network time) 

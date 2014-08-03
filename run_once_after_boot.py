@@ -48,6 +48,7 @@ sys.stdout.flush()
 
 admin_phone_number = config.get('Administrator', 'number')
 admin_notify_sms = config.getboolean('Administrator', 'notify_startup_sms')
+sync_local_time_with_network_time_sms = False; # config.getboolean('', '')
 
 print "{0} Sending confirmation sms to admin ({1})? {2}.".format(now_text, admin_phone_number, admin_notify_sms)
 if admin_notify_sms:
@@ -60,3 +61,9 @@ if admin_notify_sms:
 
     reboot_message = "Hi Admin! Restart completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status)
     sms_sender.send_sms(reboot_message, admin_phone_number)
+
+if sync_local_time_with_network_time_sms:
+    print "NOT IMPLEMENTED YET: Syncing local time with cellular network time by sending sms to myself..."    
+
+
+
