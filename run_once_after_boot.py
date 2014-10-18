@@ -45,6 +45,8 @@ else:
 
 sys.stdout.flush()
 
+localIpAddress = commands.getoutput("/sbin/ifconfig").split("\n")[1].split()[1][5:]
+print "{0} My IP address is {1}".format(now_text, localIpAddress)
 
 admin_phone_number = config.get('Administrator', 'number')
 admin_notify_sms = config.getboolean('Administrator', 'notify_startup_sms')
@@ -58,8 +60,6 @@ if admin_notify_sms:
     sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
     network_datetime = sms_sender.get_network_datetime()
     system_datetime = now_text
-
-    localIpAddress = commands.getoutput("/sbin/ifconfig").split("\n")[1].split()[1][5:]
 
     reboot_message = "Hi Admin! Restart of {4} completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status, localIpAddress)
     sms_sender.send_sms(reboot_message, admin_phone_number)
