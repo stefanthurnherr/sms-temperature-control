@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import commands
 import datetime
 import time
 import sys
@@ -59,7 +59,9 @@ if admin_notify_sms:
     network_datetime = sms_sender.get_network_datetime()
     system_datetime = now_text
 
-    reboot_message = "Hi Admin! Restart completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status)
+    localIpAddress = commands.getoutput("/sbin/ifconfig").split("\n")[1].split()[1][5:]
+
+    reboot_message = "Hi Admin! Restart of {4} completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status, localIpAddress)
     sms_sender.send_sms(reboot_message, admin_phone_number)
 
 if sync_local_time_with_network_time_sms:
