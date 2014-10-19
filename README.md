@@ -14,16 +14,16 @@ Required hardware
 
 Initial setup
 -------------
-*   #install gammu (python library to send/read sms)
+    #install gammu (python library to send/read sms)
     sudo apt-get install gammu python-gammu
 
-*   # install some kernel modules required for temp sensor and 3G usb stick
+    # install some kernel modules required for temp sensor and 3G usb stick
     sudo modprobe w1_gpio
     sudo modprobe w1_therm
     sudo modprobe usbserial
     # or better yet: add permanently to /etc/modules
 
-*   # connect the temperature sensor to Pi pins 3V3/GND/GPIO4 with a 'pullup' resistor of 4K7 Ohm.
+    # connect the temperature sensor to Pi pins 3V3/GND/GPIO4 with a 'pullup' resistor of 4K7 Ohm.
     Adafruit.com has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware).
     My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
 
