@@ -12,8 +12,14 @@ Required hardware
 * USB hub (powered)
 * Maybe some angled USB cables to save some space when packaging the whole thing (I bought one [here](http://www.angledcables.com/cables.html))
 
-Initial setup
--------------
+
+Initial hardware setup
+----------------------
+* Connect the temperature sensor to Pi pins 3V3/GND/GPIO4 with a 'pullup' resistor of 4K7 Ohm. Adafruit.com has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware). My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
+
+
+Initial software setup
+----------------------
     #install gammu (python library to send/read sms)
     sudo apt-get install gammu python-gammu
 
@@ -22,10 +28,6 @@ Initial setup
     sudo modprobe w1_therm
     sudo modprobe usbserial
     # or better yet: add permanently to /etc/modules
-
-    # connect the temperature sensor to Pi pins 3V3/GND/GPIO4 with a 'pullup' resistor of 4K7 Ohm.
-    Adafruit.com has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware).
-    My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
 
     # generate a gammu configuration and store it into .gammurc in home dir (usb modem must be connected)
     gammu-detect > ~/.gammurc
