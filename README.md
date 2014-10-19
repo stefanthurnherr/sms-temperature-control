@@ -23,6 +23,8 @@ Initial setup
     sudo modprobe usbserial
     # or better yet: add permanently to /etc/modules
 
+    # connect the temperature sensor to Pi pins 3V3, GND, and GPIO4 with a pullup resistance of 4.7 - 10 Ohm. Adafruit.com has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware). My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
+
     # generate a gammu configuration and store it into .gammurc in home dir (usb modem must be connected)
     gammu-detect > ~/.gammurc
 
