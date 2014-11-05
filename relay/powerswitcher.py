@@ -72,9 +72,9 @@ if __name__ == "__main__":
     print "initial value is {0}".format(get_status())
 
     intervalSeconds = 5
-    iteration = 0
+    iteration = 1
     max_iteration = 3
-    while iteration < max_iteration:
+    while iteration <= max_iteration:
         print "iteration {0}/{1}".format(iteration, max_iteration)
         set_status_on()
         print "  set to on - value now is {0}".format(get_status())
