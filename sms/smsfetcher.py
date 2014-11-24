@@ -65,7 +65,7 @@ class SmsFetcher(object):
 
 if __name__ == "__main__":
     gammu_config_file = '/home/pi/.gammurc'
-    gammu_config_section = 4
+    gammu_config_section = 0
     print "Fetching sms based on section {1} of gammu config at {0} ...".format(gammu_config_file, gammu_config_section) 
     sms_fetcher = SmsFetcher(gammu_config_file, gammu_config_section)
     next_sms = sms_fetcher.get_next_sms(False)
