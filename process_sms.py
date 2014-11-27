@@ -47,8 +47,23 @@ print "{0} Start sms processing by {1}".format(now_text, absolute_script_path)
 
 sms = sms_messages[0]
 
+# set system datetime to sent/received DateTime from received sms if delta is big enough
+system_datetime = datetime.now()
+sms_datetime = sms[0]['DateTime']
+delta_datetime = sms_datetime - system_datetime
+delta_seconds = delta_datetime.total_seconds()
+delta_max = 90 * 60 # 90 minutes
+if abs(delta_seconds) > delta_max:
+    # example unix date: Thu Nov 28 23:29:53 CET 2014
+    sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET 2014")
+    set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
+    print "{0} Updating system date using cmd: {2}".format(now_text, set_date_cmd)
+    os.system(set_date_cmd)
+else:
+    print "{0} system date diff is less than configured delta (diff = {1} seconds), skipping updating.".format(now_text, delta_seconds)
+
+
 sender_number = sms[0]['Number']
-sender_datetime = sms[0]['DateTime'].strftime("%Y-%m-%d %H:%M:%S")
 sender_message_raw = sms[0]['Text']
 sender_message = repr(sender_message_raw)
 print "  got sms message from {0}: {1}".format(sender_number, sender_message)
@@ -98,9 +113,6 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
 else:
     print "  not recognized, answering with help message."
     response_message = "Hi! To get current temperature, start sms with 'temp'. To check/control power, start sms with 'power' (followed by on/off to control)."
-
-#response_message = response_message + " Your message from {0} was: \"{1}\"".format(sender_datetime, sender_message)
-
 
 time_before_send = time.time()
 try:
