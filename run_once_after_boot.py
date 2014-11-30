@@ -8,6 +8,7 @@ import subprocess
 
 import ConfigParser
 
+import gammu # for exception handling only
 from relay import powerswitcher
 from sms import SmsSender
 
@@ -61,11 +62,27 @@ if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
     gammu_config_section = config.get('Phone', 'gammu_config_section')
 
-    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
-    network_datetime = sms_sender.get_network_datetime()
-    system_datetime = now_text
+    send_success = False
+    send_attempts = 0
+    retry_interval_seconds = 60
+    while not send_success:
+        try:
+	    send_attempts += 1
+    	    
+	    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
+    	    network_datetime = sms_sender.get_network_datetime()
+    	    system_datetime = now_text
 
-    reboot_message = "Hi Admin! Restart (reachable at:{3}) completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status, localIpAddress)
-    sms_sender.send_sms(reboot_message, admin_phone_number)
+    	    reboot_message = "Hi Admin! Restart (reachable at:{3}) completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status, localIpAddress)
+            
+	    sms_sender.send_sms(reboot_message, admin_phone_number)
+            send_success = True
+        except gammu.ERR_TIMEOUT, e:
+	    if (e.Code == 14 and e.Where == 'Init'):
+		print "{0} attempt #{1} to send boot-completed sms to admin failed, retrying after sleeping {}min ...".format(now_text, send_attempts, retry_interval_seconds/60)
+	        time.sleep(retry_interval_seconds)
+	    else:
+		raise
+
 
 
