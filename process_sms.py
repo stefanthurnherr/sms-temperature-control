@@ -57,7 +57,7 @@ if abs(delta_seconds) > delta_max:
     # example unix date: Thu Nov 28 23:29:53 CET 2014
     sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET 2014")
     set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
-    print "{0} Updating system date using cmd: {2}".format(now_text, set_date_cmd)
+    print "{0} Updating system date using cmd: {1}".format(now_text, set_date_cmd)
     os.system(set_date_cmd)
 else:
     print "{0} system date diff is less than configured delta (diff = {1} seconds), skipping updating.".format(now_text, delta_seconds)
