@@ -78,7 +78,7 @@ if admin_notify_sms:
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
         except gammu.ERR_TIMEOUT, e:
-	    if (e.Code == 14 and e.Where == 'Init'):
+	    if (e["Code"] == 14 and e["Where"] == 'Init'):
 		print "{0} attempt #{1} to send boot-completed sms to admin failed, retrying after sleeping {}min ...".format(now_text, send_attempts, retry_interval_seconds/60)
 	        time.sleep(retry_interval_seconds)
 	    else:
