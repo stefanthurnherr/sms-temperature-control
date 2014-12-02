@@ -73,7 +73,7 @@ if admin_notify_sms:
     	    network_datetime = sms_sender.get_network_datetime()
     	    system_datetime = now_text
 
-    	    reboot_message = "Hi Admin! Restart (reachable at:{3}) completed @ systemDateTime {0} / networkDateTime {1}. Power is now {2}.".format(system_datetime, network_datetime, power_status, localIpAddress)
+    	    reboot_message = "Hi Admin! Restart (inet:{3}) complete @ system/network {0}/{1}. Power is {2}. ({4} sms send attempts needed)".format(system_datetime, network_datetime, power_status, localIpAddress, send_attempts)
             
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
