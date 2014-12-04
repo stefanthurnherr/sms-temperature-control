@@ -21,6 +21,7 @@ GAMMU_CONFIG_FILE = config.get('Phone', 'gammu_config_file')
 GAMMU_CONFIG_SECTION = config.get('Phone', 'gammu_config_section')
 
 BLACKLIST_SENDERS = config.get('SmsProcessing', 'blacklist_senders')
+SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS = config.get('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
 
 now = datetime.now()
 now_text = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -48,19 +49,19 @@ print "{0} Start sms processing by {1}".format(now_text, absolute_script_path)
 sms = sms_messages[0]
 
 # set system datetime to sent/received DateTime from received sms if delta is big enough
-system_datetime = datetime.now()
-sms_datetime = sms[0]['DateTime']
-delta_datetime = sms_datetime - system_datetime
-delta_seconds = delta_datetime.total_seconds()
-delta_max = 90 * 60 # 90 minutes
-if abs(delta_seconds) > delta_max:
-    # example unix date: Thu Nov 28 23:29:53 CET 2014
-    sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET 2014")
-    set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
-    print "{0} Updating system date using cmd: {1}".format(now_text, set_date_cmd)
-    os.system(set_date_cmd)
-else:
-    print "{0} system date diff is less than configured delta (diff = {1} seconds), skipping updating.".format(now_text, delta_seconds)
+if SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS > 0:
+    system_datetime = datetime.now()
+    sms_datetime = sms[0]['DateTime']
+    delta_datetime = sms_datetime - system_datetime
+    delta_seconds = delta_datetime.total_seconds()
+    if abs(delta_seconds) > SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS:
+        # example unix date: Thu Nov 28 23:29:53 CET 2014
+        sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET %Y")
+        set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
+        print "{0} Updating system date using cmd: {1}".format(now_text, set_date_cmd)
+        os.system(set_date_cmd)
+    else:
+        #print "{0} system date diff is not greater than configured delta (diff = {1} seconds), skipping updating.".format(now_text, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
 
 
 sender_number = sms[0]['Number']
