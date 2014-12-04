@@ -60,7 +60,7 @@ if SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS > 0:
         set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
         print "{0} Updating system date using cmd: {1}".format(now_text, set_date_cmd)
         os.system(set_date_cmd)
-    else:
+    #else:
         #print "{0} system date diff is not greater than configured delta (diff = {1} seconds), skipping updating.".format(now_text, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
 
 
