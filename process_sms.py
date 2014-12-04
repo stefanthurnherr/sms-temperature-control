@@ -13,6 +13,9 @@ from sms import SmsFetcher
 from sms import SmsSender
 from relay import powerswitcher
 
+
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 
@@ -23,8 +26,7 @@ GAMMU_CONFIG_SECTION = config.get('Phone', 'gammu_config_section')
 BLACKLIST_SENDERS = config.get('SmsProcessing', 'blacklist_senders')
 SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS = config.get('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
 
-now = datetime.now()
-now_text = now.strftime("%Y-%m-%d %H:%M:%S")
+log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
 signal_strength_percentage = '--'
 time_before_fetch = time.time()
@@ -34,17 +36,17 @@ try:
     sms_messages = sms_fetcher.delete_get_next_sms()
 except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
     timeout_after_time = time.time() - time_before_fetch
-    print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(now_text, timeout_after_time, signal_strength_percentage)
+    print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(log_ts, timeout_after_time, signal_strength_percentage)
     raise # re-raise exception so we get the stacktrace to stderr
 
 absolute_script_path = os.path.abspath(__file__)
 
 if not sms_messages:
     # would write a log message every minute even if no sms found 
-    #print "{0} No sms found by {1} - bye.".format(now_text, absolute_script_path)
+    #print "{0} No sms found by {1} - bye.".format(log_ts, absolute_script_path)
     sys.exit()
 
-print "{0} Start sms processing by {1}".format(now_text, absolute_script_path)
+print "{0} Start sms processing by {1}".format(log_ts, absolute_script_path)
 
 sms = sms_messages[0]
 
@@ -58,11 +60,12 @@ if SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS > 0:
         # example unix date: Thu Nov 28 23:29:53 CET 2014
         sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET %Y")
         set_date_cmd = "date -s \"{0}\"".format(sms_datetime_unix)
-        print "{0} Updating system date using cmd: {1}".format(now_text, set_date_cmd)
+        print "{0} Updating system datetime (delta: {1} seconds) using cmd: {2}".format(log_ts, delta_seconds, set_date_cmd)
         os.system(set_date_cmd)
     #else:
-        #print "{0} system date diff is not greater than configured delta (diff = {1} seconds), skipping updating.".format(now_text, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
+        #print "{0} system date diff is not greater than configured delta (diff = {1} seconds), skipping updating.".format(log_ts, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
 
+now_string = datetime.now().strftime(DATETIME_FORMAT)
 
 sender_number = sms[0]['Number']
 sender_message_raw = sms[0]['Text']
@@ -88,7 +91,7 @@ if sender_message_raw and sender_message_raw.lower().startswith('temp'):
     temp_raw = temperaturereader.read_celsius()
     temp = round(temp_raw, 1)
     print "  responding with temperature: {0} Celsius.".format(temp)
-    response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_text)
+    response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_string)
 
 elif sender_message_raw and sender_message_raw.lower().startswith('power'):
     
@@ -107,13 +110,13 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
     
     print "  responding with power status: {0} (was: {1}).".format(power_status, power_status_before)
     if requested_state:
-        response_message = "Hi! Power has been switched {0}, was {1} ({2}).".format(power_status, power_status_before, now_text)
+        response_message = "Hi! Power has been switched {0}, was {1} ({2}).".format(power_status, power_status_before, now_string)
     else:
-        response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_text)
+        response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_string)
 
 else:
     print "  not recognized, answering with help message."
-    response_message = "Hi! To get current temperature, start sms with 'temp'. To check/control power, start sms with 'power' (followed by on/off to control)."
+    response_message = "Hi! To get current temperature, start sms with 'temp'. To check/control power, start sms with 'power' (followed by on/off to control) ({0}).".format(now_string)
 
 time_before_send = time.time()
 try:
@@ -121,6 +124,6 @@ try:
     sms_sender.send_sms(response_message, sender_number)
 except (gammu.ERR_UNKNOWN):
     timeout_after_time = time.time() - time_before_send
-    print "{0} Got exception after {1} seconds while trying to send sms.".format(now_text, timeout_after_time)
+    print "{0} Got exception after {1} seconds while trying to send sms.".format(log_ts, timeout_after_time)
     raise # re-raise exception so we get the stacktrace to stderr
 
