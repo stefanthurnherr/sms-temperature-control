@@ -37,7 +37,8 @@ else:
     time.sleep(30) # wait until modem is connected
     print "-----------------<usb_modeswitch>-------------------"
     sys.stdout.flush()
-    return_code = subprocess.call(['/usr/sbin/usb_modeswitch', '-c', '/etc/usb_modeswitch.conf'], bufsize=-1, stderr=subprocess.STDOUT)
+    # -I arg needed for Huawei E1820, otherwise modeswitch doesn't work upon cold boot without additional warm reboot
+    return_code = subprocess.call(['/usr/sbin/usb_modeswitch', '-I', '-c', '/etc/usb_modeswitch.conf'], bufsize=-1, stderr=subprocess.STDOUT)
     print "-----------------</usb_modeswitch>------------------"
     print "{0} Ran usb_modeswitch, got return code {1}".format(log_ts, return_code)
     if int(return_code) == 0:
