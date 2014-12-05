@@ -13,7 +13,7 @@ from relay import powerswitcher
 from sms import SmsSender
 
 
-log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+log_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 print "{0} -------------------REBOOT-----------------------".format(log_ts)
 
@@ -28,20 +28,21 @@ config.read('/home/pi/sms-temperature-control/my.cfg')
 modem_identifier = config.get('Phone', 'modem_identifier')
 
 
-lsusb_output = subprocess.check_output("lsusb", stderr=subprocess.STDOUT)
+lsusb_output = subprocess.check_output("lsusb", bufsize=-1, stderr=subprocess.STDOUT)
 if modem_identifier and (modem_identifier in lsusb_output):
     print "{0} Modem with identifier {1} loaded correctly according to lsusb.".format(log_ts, modem_identifier)
 else:
     # run usb_modeswitch to ensure 3G modem is in modem state (and not in storage mode)
-    print "{0} Modem with identifier {1} not found in lsusb output, running usb_modeswitch...".format(log_ts, modem_identifier) 
+    print "{0} Modem with identifier {1} not found in lsusb output, running usb_modeswitch after 30secs sleep ...".format(log_ts, modem_identifier) 
     time.sleep(30) # wait until modem is connected
     print "-----------------<usb_modeswitch>-------------------"
     sys.stdout.flush()
-    return_code = subprocess.call(['/usr/sbin/usb_modeswitch', '-c', '/etc/usb_modeswitch.conf'], stderr=subprocess.STDOUT)
+    return_code = subprocess.call(['/usr/sbin/usb_modeswitch', '-c', '/etc/usb_modeswitch.conf'], bufsize=-1, stderr=subprocess.STDOUT)
     print "-----------------</usb_modeswitch>------------------"
     print "{0} Ran usb_modeswitch, got return code {1}".format(log_ts, return_code)
     if int(return_code) == 0:
-        time.sleep(60) # sleep a while after disconnect to give modem time to (re-)connect
+        print "{0} sleeping for 60secs before continuing ...".format(log_ts)
+	time.sleep(60) # sleep a while after disconnect to give modem time to (re-)connect
 
 sys.stdout.flush()
 
@@ -71,7 +72,7 @@ if admin_notify_sms:
 	    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
     	    network_datetime = sms_sender.get_network_datetime()
 
-    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed)".format(datetime.now(), power_status, localIpAddress, send_attempts)
+    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed)".format(datetime.datetime.now(), power_status, localIpAddress, send_attempts)
             
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
