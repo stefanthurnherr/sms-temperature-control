@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import commands
-import datetime
+from datetime import datetime
 import time
 import sys
 import subprocess
@@ -13,7 +13,7 @@ from relay import powerswitcher
 from sms import SmsSender
 
 
-log_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 print "{0} -------------------REBOOT-----------------------".format(log_ts)
 
@@ -71,9 +71,9 @@ if admin_notify_sms:
 	    send_attempts += 1
     	    
 	    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
-    	    network_datetime = sms_sender.get_network_datetime()
+    	    #network_datetime = sms_sender.get_network_datetime()
 
-    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed)".format(datetime.datetime.now(), power_status, localIpAddress, send_attempts)
+    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed)".format(log_ts, power_status, localIpAddress, send_attempts)
             
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
