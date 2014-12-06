@@ -24,7 +24,7 @@ GAMMU_CONFIG_FILE = config.get('Phone', 'gammu_config_file')
 GAMMU_CONFIG_SECTION = config.get('Phone', 'gammu_config_section')
 
 BLACKLIST_SENDERS = config.get('SmsProcessing', 'blacklist_senders')
-SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS = config.get('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
+SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS = config.getint('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
 
 log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
@@ -63,7 +63,7 @@ if SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS > 0:
         print "{0} Updating system datetime (delta: {1} seconds) using cmd: {2}".format(log_ts, delta_seconds, set_date_cmd)
         os.system(set_date_cmd)
     #else:
-        #print "{0} system date diff is not greater than configured delta (diff = {1} seconds), skipping updating.".format(log_ts, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
+	#print "{0} system date diff ({1} seconds) is not greater than configured delta ({2} seconds), skipping updating.".format(log_ts, delta_seconds, SYSTEM_DATETIME_MAX_DIFF_NO_UPDATE_SECONDS)
 
 now_string = datetime.now().strftime(DATETIME_FORMAT)
 
