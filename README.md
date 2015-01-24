@@ -6,7 +6,7 @@ Required hardware
 * Raspberry Pi with an sd card (4GB) and running raspbian image
 * Temperature sensor (I used DS18B20 with cable and waterproof)
 * Some cables, breadboard, resistances, LEDs (for testing purposes), multimeter
-* relay (I used a [5V 10A250VAC 2-channel relay module](http://www.ebay.co.uk/itm/5V-2-4-8-Channel-Electronic-Relay-Module-Shield-for-Arduino-ARM-PIC-AVR-DSP-10A-/400514325341?var=670109806408))
+* Relay (I used a [5V AC250V10A 1-channel relay module](http://www.ebay.com/itm/5V-One-1-Channel-Relay-Module-Board-Shield-For-PIC-AVR-DSP-ARM-MCU-Arduino-MKLP-/251804970941?pt=LH_DefaultDomain_0&hash=item3aa0beefbd))
 * GSM/3G usb modem, unlocked (I used [gsmliberty.net](http://www.gsmliberty.net) to unlock mine)
 * valid SM card (prepaid, preferably refillable via internet)
 * USB hub (powered)
