@@ -116,7 +116,7 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
 
 else:
     print "  not recognized, answering with help message."
-    response_message = "Hi! To get current temperature, start sms with 'temp'. To check/control power, start sms with 'power' (followed by on/off to control) ({0}).".format(now_string)
+    response_message = "Hi! To get current temperature, start sms with 'temp'. To check power, start sms with 'power' (followed by 'on'/'off' to control) ({0}).".format(now_string)
 
 time_before_send = time.time()
 try:
