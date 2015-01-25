@@ -16,7 +16,8 @@ Required hardware
 
 Initial hardware setup
 ----------------------
-* Connect the temperature sensor to Pi pins 3V3/GND/GPIO4 with a 'pullup' resistor of 4K7 Ohm. Adafruit.com has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware). My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
+* Connect the temperature sensor to correct power/ground/data pins on the Pi using a 'pullup' resistor of 4K7 Ohm. See sensor specification and my corresponding python script. Adafruit.com also has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware). My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
+* Connect the relay to the correct Pi pins - check with specification and my corresponding python script
 
 
 Initial software setup
