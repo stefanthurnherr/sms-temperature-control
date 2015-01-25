@@ -11,7 +11,8 @@ Required hardware
 * valid SIM card (prepaid, preferably refillable via internet)
 * Powered USB hub ([I used this 4-port hub from i-tec](http://www.i-tec-europe.eu/?t=3&v=265&lng=en), product number U2HUB412: small size and delivers enough current to power the RPi)
 * Maybe some angled USB cables to save some space when packaging the whole thing (I bought one [here](http://www.angledcables.com/cables.html))
-
+* A rasp and a drilling machine to make the holes for the cables
+* Power cable with male and female plug; cable will be cut in half to put the relay in between)
 
 Initial hardware setup
 ----------------------
