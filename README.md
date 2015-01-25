@@ -80,6 +80,11 @@ How to install a python module
     # sudo python setup.py install
     # (alternative: sudo pip install rpi.gpio)
 
+Screenshots of my temperature control box
+-----------------------------------------
+Assembled box without top cover: ![ScreenShot](/screenshots/readme-openbox.jpg)
+Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
+
 Ideas to be implemented in the future
 -------------------------------------
 * Use gammu's USSD interface to warn Administrator if balance (for prepaid SIM cards) is low
