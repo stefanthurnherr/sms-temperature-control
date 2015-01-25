@@ -1,5 +1,8 @@
 [Phone]
-number=0123456789
+#Will be used to prevent SMS loops (accidentally sending SMS to itself). Matching
+# is done by substring, so don't include the leading '0' to be sure the that both
+# +46 123 456 789 and 0123 456 789 are caught by the check.
+number=123456789
 gammu_config_file=/home/pi/.gammurc
 gammu_config_section=1
 #
