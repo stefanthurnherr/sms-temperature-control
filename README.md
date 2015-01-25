@@ -56,16 +56,16 @@ Initial software setup
 Some helpful commands when trying out gammu
 -------------------------------------------
     # waiting for PIN?
-    gammu getsecuritystatus
+    > gammu getsecuritystatus
 
     # enter PIN
-    gammu entersecuritycode PIN -
+    > gammu entersecuritycode PIN -
 
     # phone info
-    gammu identify
+    > gammu identify
 
     # send sms
-    echo "sms content" | gammu sendsms TEXT +1234567890 # mobile number in international format
+    > echo "sms content" | gammu sendsms TEXT +1234567890 # mobile number in international format
 
 How to install a python module
 ------------------------------
@@ -73,21 +73,21 @@ How to install a python module
     # http://openmicros.org/index.php/articles/94-ciseco-product-documentation/raspberry-pi/217-getting-started-with-raspberry-pi-gpio-and-python#3
 
     # install python-dev and python-pip (pip install gcc amongst others)
-    # sudo apt-get install python-dev python-pip
+    > sudo apt-get install python-dev python-pip
 
     # download python sources for module, e.g.:
-    # wget https://pypi.python.org/packages/source/R/RPi.GPIO/RPi.GPIO-0.5.5.tar.gz
+    > wget https://pypi.python.org/packages/source/R/RPi.GPIO/RPi.GPIO-0.5.5.tar.gz
 
     # untar sources
 
     # enter the extracted module directory
 
     # run this to install python module:
-    # sudo python setup.py install
+    > sudo python setup.py install
     # (alternative: sudo pip install rpi.gpio)
 
-Screenshots of my temperature control box
------------------------------------------
+Screenshots of one of my boxes
+------------------------------
 Assembled box without top cover: ![ScreenShot](/screenshots/readme-openbox.jpg)
 Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
 
