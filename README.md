@@ -53,6 +53,7 @@ Initial software setup
     # *  *  *  *  *  command to be executed
     #
 
+
 Some helpful commands when trying out gammu
 -------------------------------------------
     # waiting for PIN?
@@ -67,8 +68,22 @@ Some helpful commands when trying out gammu
     # send sms
     > echo "sms content" | gammu sendsms TEXT +1234567890 # mobile number in international format
 
+
+Screenshots of one of my boxes
+------------------------------
+Assembled box without top cover: ![ScreenShot](/screenshots/readme-openbox.jpg)
+Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
+
+
+Ideas to be implemented in the future
+-------------------------------------
+* Use gammu's USSD interface to warn Administrator if balance (for prepaid SIM cards) is low
+
+
 How to install a python module
 ------------------------------
+The current Raspian distribution has all required python modules installed by default, so this shouldn't be necessary. But I've kept it here for future reference.
+
     # example description see this url:
     # http://openmicros.org/index.php/articles/94-ciseco-product-documentation/raspberry-pi/217-getting-started-with-raspberry-pi-gpio-and-python#3
 
@@ -85,12 +100,3 @@ How to install a python module
     # run this to install python module:
     > sudo python setup.py install
     # (alternative: sudo pip install rpi.gpio)
-
-Screenshots of one of my boxes
-------------------------------
-Assembled box without top cover: ![ScreenShot](/screenshots/readme-openbox.jpg)
-Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
-
-Ideas to be implemented in the future
--------------------------------------
-* Use gammu's USSD interface to warn Administrator if balance (for prepaid SIM cards) is low
