@@ -116,8 +116,11 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
 
 elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
     print "  responding with system info."
+    rpiSerialNumber = systeminfo.get_rpi_serial_number()
     localInetAddress = systeminfo.get_inet_address()
-    
+    gitRevision = systeminfo.get_git_revision()
+    response_message = "System info: rpiSerial:{0}, inet:{1}, gitRev:{2}.".format(rpiSerialNumber, localInetAddress, gitRevision)  
+
 
 else:
     print "  not recognized, answering with help message."
