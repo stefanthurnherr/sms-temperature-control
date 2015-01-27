@@ -12,6 +12,7 @@ from temp import temperaturereader
 from sms import SmsFetcher
 from sms import SmsSender
 from relay import powerswitcher
+from systemutil import systeminfo
 
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -94,17 +95,16 @@ if sender_message_raw and sender_message_raw.lower().startswith('temp'):
     response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_string)
 
 elif sender_message_raw and sender_message_raw.lower().startswith('power'):
-    
     requested_state = ''
     power_status_before = powerswitcher.get_status_string_safe()
     if sender_message_raw.lower().startswith('power on'):
         requested_state = 'ON'
         powerswitcher.set_status_on_safe()
-        print"  power has been set ON"
+        print "  power has been set ON"
     elif sender_message_raw.lower().startswith('power off'):
         requested_state = 'OFF'
         powerswitcher.set_status_off_safe()
-        print"  power has been set OFF"
+        print "  power has been set OFF"
 
     power_status = powerswitcher.get_status_string_safe()
     
@@ -113,6 +113,11 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
         response_message = "Hi! Power has been switched {0}, was {1} ({2}).".format(power_status, power_status_before, now_string)
     else:
         response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_string)
+
+elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
+    print "  responding with system info."
+    localInetAddress = systeminfo.get_inet_address()
+    
 
 else:
     print "  not recognized, answering with help message."

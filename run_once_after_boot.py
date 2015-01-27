@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import commands
 from datetime import datetime
 import time
 import sys
@@ -12,6 +11,7 @@ import ConfigParser
 import gammu # for exception handling only
 from relay import powerswitcher
 from sms import SmsSender
+from systemutil import systeminfo
 
 
 log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -48,12 +48,11 @@ else:
 
 sys.stdout.flush()
 
-localIpAddress = commands.getoutput("/sbin/ifconfig").split("\n")[1] 
-if 'inet' in localIpAddress:
-    localIpAddress = localIpAddress.split()[1][5:]
+localIpAddress = systeminfo.get_inet_address()
+if localIpAddress:
     print "{0} My IP address is {1}.".format(log_ts, localIpAddress)
 else:
-    localIpAddress = "none" 
+    localIpAddress = 'None'
     print "{0} No inet interface found, not reachable on any IP address.".format(log_ts)
 
 admin_phone_number = config.get('Administrator', 'number')
