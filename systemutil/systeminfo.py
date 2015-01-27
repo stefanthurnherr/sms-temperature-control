@@ -6,8 +6,8 @@ from subprocess import Popen, PIPE
 
 
 def get_rpi_serial_number():
-    #cpuInfoLines = commands.getoutput("cat /proc/cpuinfo").split("\n")
-    cpuInfoLines = ["hello", "Serial      : 000000065gh7890 ", "world"]
+    cpuInfoLines = commands.getoutput("cat /proc/cpuinfo").split("\n")
+    #cpuInfoLines = ["hello", "Serial      : 000000065gh7890 ", "world"]
     cpuInfoLines = filter(lambda s: "Serial  " in s, cpuInfoLines)
     return cpuInfoLines[0].split(":")[1].lstrip(' 0')
 
