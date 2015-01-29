@@ -115,11 +115,17 @@ elif sender_message_raw and sender_message_raw.lower().startswith('power'):
         response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_string)
 
 elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
-    print "  responding with system info."
+    print "  responding with system info:"
+    kernelVersion = systeminfo.get_kernel_version()
     rpiSerialNumber = systeminfo.get_rpi_serial_number()
     localInetAddress = systeminfo.get_inet_address()
     gitRevision = systeminfo.get_git_revision()
-    response_message = "System info: rpiSerial:{0}, inet:{1}, gitRev:{2}.".format(rpiSerialNumber, localInetAddress, gitRevision)  
+    print "    system datetime   : {0}".format(now_string)
+    print "    kernel version    : {0}".format(kernelVersion)
+    print "    RPi serial number : {0}".format(rpiSerialNumber)
+    print "    inet address      : {0}".format(localInetAddress)
+    print "    git revision      : {0}".format(gitRevision)
+    response_message = "System info:\n systemTime:{0}\n kernel:{1}\n rpiSerial:{2}\n inet:{3}\n gitRev:{4}\n.".format(now_string, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision)  
 
 
 else:
