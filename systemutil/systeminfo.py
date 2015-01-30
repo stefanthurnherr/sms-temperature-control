@@ -22,17 +22,23 @@ def get_rpi_serial_number():
 
 def get_inet_address():
     ethIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'eth0'])
-    ethIpAddress = ethIpAddress.strip().split("\n")[1]
-    if 'inet' in ethIpAddress:
-        return ethIpAddress.split()[1][5:]
+    ethIpAddress = __extract_inet_string(ethIpAddress)
+    if ethIpAddress: 
+        return ethIpAddress
     else:
         wlanIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'wlan0'])
-        wlanIpAddress = wlanIpAddress.strip().split("\n")[1]
-        if 'inet' in wlanIpAddress:
-            return wlanIpAddress.split()[1][5:] 
-        else:
-            return None
+        return __extract_inet_string(wlanIpAddress)
 
+
+def __extract_inet_string(networkInterfaceString):
+    if not networkInterfaceString:
+        return None 
+    ipAddress = networkInterfaceString.strip().split("\n")[1]
+    if 'inet' in ipAddress:
+        return ipAddress.split()[1][5:] 
+    else:
+        return None
+    
 
 def get_git_revision():
     with open(os.devnull, "w") as fnull:
