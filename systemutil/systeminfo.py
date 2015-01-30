@@ -24,12 +24,12 @@ def get_inet_address():
     ethIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'eth0'])
     ethIpAddress = __extract_inet_string(ethIpAddress)
     if ethIpAddress: 
-        return ethIpAddress ' (eth0)'
+        return ethIpAddress + ' (eth0)'
     else:
         wlanIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'wlan0'])
         wlanIpAddress = __extract_inet_string(wlanIpAddress)
         if wlanIpAddress:
-            return wlanIpAddress ' (wlan0)'
+            return wlanIpAddress + ' (wlan0)'
         else:
             return None
 
