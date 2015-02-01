@@ -90,9 +90,13 @@ response_message = None
 
 if sender_message_raw and sender_message_raw.lower().startswith('temp'):
     temp_raw = temperaturereader.read_celsius()
-    temp = round(temp_raw, 1)
-    print "  responding with temperature: {0} Celsius.".format(temp)
-    response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_string)
+    if temp_raw: 
+        temp = round(temp_raw, 1)
+        print "  responding with temperature: {0} Celsius.".format(temp)
+        response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_string)
+    else:
+        print "  temperature could not be read."
+        response_message = "Hi! Temperature sensor is offline, check log files."
 
 elif sender_message_raw and sender_message_raw.lower().startswith('power'):
     requested_state = ''
