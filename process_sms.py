@@ -129,7 +129,8 @@ elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
     print "    RPi serial number : {0}".format(rpiSerialNumber)
     print "    inet address      : {0}".format(localInetAddress)
     print "    git revision      : {0}".format(gitRevision)
-    response_message = "System info:\n systemTime:{0}\n kernel:{1}\n rpiSerial:{2}\n inet:{3}\n gitRev:{4}\n.".format(now_string, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision)  
+    print "    Signal strength   : {0}%".format(signal_strength_percentage)
+    response_message = "System info:\n systemTime:{0}\n kernel:{1}\n rpiSerial:{2}\n inet:{3}\n gitRev:{4}\n signalStrength:{5}%\n.".format(now_string, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
 
 
 else:
