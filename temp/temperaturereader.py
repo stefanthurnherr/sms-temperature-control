@@ -6,26 +6,32 @@ import glob
 import time
 
 
-base_dir = '/sys/bus/w1/devices/'
-deviceFolders = glob.glob(base_dir + '28*')
-if len(deviceFolders) == 0:
-    print "no 28* device folder found under {0}, bye.".format(base_dir)
-    sys.exit()
-elif len(deviceFolders) > 1:
-    print "more than one 28* device folder found under {0}, bye.".format(base_dir)
-    sys.exit()
+def __get_device_file():
+    base_dir = '/sys/bus/w1/devices/'
+    deviceFolders = glob.glob(base_dir + '28*')
+    if len(deviceFolders) == 0:
+        print "no 28* device folder found under {0}, bye.".format(base_dir)
+        return None
+ 
+    return deviceFolders[0] + '/w1_slave'
 
-device_folder = deviceFolders[0]
-device_file = device_folder + '/w1_slave'
 
 def read_temp_raw():
-    f = open(device_file, 'r')
-    lines = f.readlines()
-    f.close()
-    return lines
+    device_file = __get_device_file()
+    if device_file: 
+        f = open(device_file, 'r')
+        lines = f.readlines()
+        f.close()
+        return lines
+    else:
+        return None
+
 
 def read_celsius():
     lines = read_temp_raw()
+    if not lines:
+        return None
+ 
     while lines[0].strip()[-3:] != 'YES':
         time.sleep(0.2)
         lines = read_temp_raw()
