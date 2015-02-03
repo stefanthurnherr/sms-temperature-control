@@ -22,6 +22,9 @@ Initial hardware setup
 
 Initial software setup
 ----------------------
+    # uninstall some useless/non-required packages
+    > sudo apt-get remove --purge wolfram-engine
+
     #install gammu (python library to send/read sms)
     > sudo apt-get install gammu python-gammu
 
