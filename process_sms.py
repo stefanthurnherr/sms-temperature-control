@@ -15,9 +15,9 @@ from relay import powerswitcher
 from systemutil import systeminfo
 
 
-def process_next_sms():
-    DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-    
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+def __process_next_sms():
     config = ConfigParser.SafeConfigParser()
     config.read('/home/pi/sms-temperature-control/my.cfg')
     
@@ -158,5 +158,9 @@ def process_next_sms():
         raise # re-raise exception so we get the stacktrace to stderr
 
 
+
+def run():
+    __process_next_sms()
+
 if __name__ == '__main__':
-    process_next_sms()
+    run()
