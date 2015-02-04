@@ -23,9 +23,10 @@ class TemperatureController(object):
         self.config = {}
 
         work_dir_raw = config_parser.get('System', 'work_dir')
-        self.config['workDir'] = os.path.abspath(work_dir_raw)
-        if not os.path.exists(self.work_dir):
-            os.makedirs(self.work_dir)
+        work_dir = os.path.abspath(work_dir_raw)
+        if not os.path.exists(work_dir):
+            os.makedirs(work_dir)
+        self.config['workDir'] = work_dir
     
         self.config['myNumber'] = config_parser.get('Phone', 'number')
         self.config['gammuConfigFile'] = config_parser.get('Phone', 'gammu_config_file')
@@ -37,7 +38,7 @@ class TemperatureController(object):
         self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
 
-    def process_next_sms():
+    def process_next_sms(self):
         signal_strength_percentage = '--'
         time_before_fetch = time.time()
         try:
@@ -45,7 +46,7 @@ class TemperatureController(object):
             signal_strength_percentage = sms_fetcher.get_signal_strength_percentage()
             sms_messages = sms_fetcher.delete_get_next_sms()
         except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
-            errors_file = self.work_dir + '/GAMMU_ERRORS' 
+            errors_file = self.config['workDir'] + '/GAMMU_ERRORS' 
             if not os.path.exists(errors_file): 
                with open(errors_file, 'a'):
                     os.utime(errors_file, None) 
@@ -162,7 +163,6 @@ class TemperatureController(object):
 
 
 if __name__ == '__main__':
-
     config_parser = ConfigParser.SafeConfigParser()
     config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
