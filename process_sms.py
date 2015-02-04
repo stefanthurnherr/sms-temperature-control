@@ -38,7 +38,29 @@ class TemperatureController(object):
         self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
 
-    def process_next_sms(self):
+    def run(self):
+        errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
+        if not os.path.exists(errors_file):
+            with open(errors_file, 'w') as f:
+                f.write('0') 
+        
+        error_occurred = True
+        try:
+            self.__process_next_sms()
+            error_occurred = False
+        finally:
+            if error_occurred:
+                with open(errors_file, 'r+') as f:
+                    old_error_count = f.readlines()[0] 
+                    new_error_count = int(old_error_count) + 1 
+                    f.seek(0) 
+                    f.write(str(new_error_count))
+            else:
+                with open(errors_file, 'w') as f:
+                    f.write('0')
+
+
+    def __process_next_sms(self):
         signal_strength_percentage = '--'
         time_before_fetch = time.time()
         try:
@@ -167,4 +189,4 @@ if __name__ == '__main__':
     config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
     temperature_controller = TemperatureController(config_parser)
-    temperature_controller.process_next_sms()
+    temperature_controller.run()
