@@ -20,6 +20,11 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 
+WORK_DIR_RAW = config.get('System', 'work_dir')
+WORK_DIR = os.path.abspath(WORK_DIR_RAW)
+if not os.path.exists(WORK_DIR):
+    os.makedirs(WORK_DIR)
+
 MY_NUMBER = config.get('Phone', 'number')
 GAMMU_CONFIG_FILE = config.get('Phone', 'gammu_config_file')
 GAMMU_CONFIG_SECTION = config.get('Phone', 'gammu_config_section')
@@ -36,6 +41,11 @@ try:
     signal_strength_percentage = sms_fetcher.get_signal_strength_percentage()
     sms_messages = sms_fetcher.delete_get_next_sms()
 except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
+    errors_file = WORK_DIR + '/GAMMU_ERRORS' 
+    if not os.path.exists(errors_file): 
+       with open(errors_file, 'a'):
+            os.utime(errors_file, None) 
+ 
     timeout_after_time = time.time() - time_before_fetch
     print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(log_ts, timeout_after_time, signal_strength_percentage)
     raise # re-raise exception so we get the stacktrace to stderr
