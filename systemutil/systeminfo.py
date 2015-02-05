@@ -21,20 +21,16 @@ def get_rpi_serial_number():
 
 
 def get_inet_address():
-    ethIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'eth0'])
-    ethIpAddress = __extract_inet_string(ethIpAddress)
-    if ethIpAddress: 
-        return ethIpAddress + ' (eth0)'
-    else:
-        wlanIpAddress = __get_cmd_stdout(['/sbin/ifconfig', 'wlan0'])
-        wlanIpAddress = __extract_inet_string(wlanIpAddress)
-        if wlanIpAddress:
-            return wlanIpAddress + ' (wlan0)'
-        else:
-            return None
+    interfaceNames = ['eth0', 'eth1', 'wlan0']
+    for interfaceName in interfaceNames:
+        ipAddress = __extract_inet_string(interfaceName)
+        if ipAddress: 
+            return ipAddress + ' (' + interfaceName + ')'
+    return None
 
 
-def __extract_inet_string(networkInterfaceString):
+def __extract_inet_string(interfaceName):
+    networkInterfaceString = __get_cmd_stdout(['/sbin/ifconfig', interfaceName])
     if not networkInterfaceString:
         return None 
     ipAddress = networkInterfaceString.strip().split("\n")[1]
