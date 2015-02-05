@@ -38,6 +38,9 @@ Initial software setup
     > sudo modprobe usbserial
     # or better yet: add permanently to /etc/modules
 
+    # if not yet done: generate an ssh key pair
+    > ssh-keygen -t rsa -C "your_email@example.com"
+
     # clone this git repository into the pi home folder
     > cd
     > git clone git@github.com:stefanthurnherr/sms-temperature-control.git
