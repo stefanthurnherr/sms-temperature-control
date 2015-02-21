@@ -41,7 +41,7 @@ Initial software setup
     # iface ethX inet dhcp 
 
     # Enable 1-wire support (for DS18B20 temperature sensor):
-    #  For newer kernels >= 18.5):
+    #  For newer kernels >= 3.18.5):
     #   ensure following lines appear in your /boot/config.txt :
     device_tree=bcm2708-rpi-b-plus.dtb #for RPi A+/B+
     device_tree_overlay=overlays/w1-gpio-overlay.dtb
@@ -49,20 +49,19 @@ Initial software setup
     #  ensure the following lines appear in your /etc/modules :
     w1_gpio
     w1_therm
+    usbserial
 
-    # install kernel module required for 3G usb stick
-    > sudo modprobe usbserial
-    # or better yet: add permanently to /etc/modules
-
-    # if not yet done: generate an ssh key pair
-    > ssh-keygen -t rsa -C "your_email@example.com"
-
-    # clone this git repository into the pi home folder
-    > cd
-    > git clone git@github.com:stefanthurnherr/sms-temperature-control.git
+    # at this point restart if you haven't done so yet:
+    > sudo shutdown -r now
 
     # generate a gammu configuration and store it into .gammurc in home dir (usb modem must be connected)
     > gammu-detect > ~/.gammurc
+
+    # if not yet done: generate an ssh key pair
+    > ssh-keygen -t rsa -C "your_email@example.com"
+    # now clone this git repository into the pi home folder
+    > cd
+    > git clone git@github.com:stefanthurnherr/sms-temperature-control.git
 
     # add python script to root crontab (root is required to read/write GPIO channels)
     # sudo crontab -e
