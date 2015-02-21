@@ -91,6 +91,9 @@ Some helpful commands when trying out gammu
     # send sms
     > echo "sms content" | gammu sendsms TEXT +1234567890 # mobile number in international format
 
+    # send USSD code (to check sim card balance etc.) - I never got this to work with my USB dongle::
+    > gammu -c ${HOME}/.gammurc.cfg getussd '*100#'
+
 
 Screenshots of one of my boxes
 ------------------------------
