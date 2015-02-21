@@ -45,8 +45,8 @@ Initial software setup
     #   ensure following lines appear in your /boot/config.txt :
     device_tree=bcm2708-rpi-b-plus.dtb #for RPi A+/B+
     device_tree_overlay=overlays/w1-gpio-overlay.dtb
-    # For older kernels:
-    #  ensure the following lines appear in your /etc/modules :
+    #  For older kernels:
+    #   ensure the following lines appear in your /etc/modules :
     w1_gpio
     w1_therm
     usbserial
