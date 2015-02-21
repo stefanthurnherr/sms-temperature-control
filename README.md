@@ -34,20 +34,23 @@ Initial software setup
     #install gammu (python library to send/read sms)
     > sudo apt-get install gammu python-gammu
 
-    # ensure that the following two lines appear in your /boot/config.txt
-    #  (that is for RPi model B, and DS18B20 temperature sensor)
-    device_tree=bcm2708-rpi-b.dtb
-    device_tree_overlay=overlays/w1-gpio-overlay.dtb
-
     # if you want to use an USB Ethernet adapter to connect to the RPi
     #  (for updating, configuring, debugging etc), then
     #  ensure that you have the following lines in /etc/network/interfaces :
     # allow-hotplug ethX
     # iface ethX inet dhcp 
 
-    # install some kernel modules required for temp sensor and 3G usb stick
-    > sudo modprobe w1_gpio
-    > sudo modprobe w1_therm
+    # Enable 1-wire support (for DS18B20 temperature sensor):
+    #  For newer kernels >= 18.5):
+    #   ensure following lines appear in your /boot/config.txt :
+    device_tree=bcm2708-rpi-b-plus.dtb #for RPi A+/B+
+    device_tree_overlay=overlays/w1-gpio-overlay.dtb
+    # For older kernels:
+    #  ensure the following lines appear in your /etc/modules :
+    w1_gpio
+    w1_therm
+
+    # install kernel module required for 3G usb stick
     > sudo modprobe usbserial
     # or better yet: add permanently to /etc/modules
 
