@@ -39,6 +39,12 @@ Initial software setup
     device_tree=bcm2708-rpi-b.dtb
     device_tree_overlay=overlays/w1-gpio-overlay.dtb
 
+    # if you want to use an USB Ethernet adapter to connect to the RPi
+    #  (for updating, configuring, debugging etc), then
+    #  ensure that you have the following lines in /etc/network/interfaces :
+    # allow-hotplug ethX
+    # iface ethX inet dhcp 
+
     # install some kernel modules required for temp sensor and 3G usb stick
     > sudo modprobe w1_gpio
     > sudo modprobe w1_therm
