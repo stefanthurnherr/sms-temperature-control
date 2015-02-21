@@ -63,6 +63,8 @@ Initial software setup
     > cd
     > git clone git@github.com:stefanthurnherr/sms-temperature-control.git
 
+    # go through config file at sms-temperature-control/my.cfg and adjust as needed
+
     # add python script to root crontab (root is required to read/write GPIO channels)
     # sudo crontab -e
     # */15 * * * * /usr/bin/python /home/pi/sms-temperature-control/say_hello.py >> /home/pi/sms-temperature-control/log/crontab.stdout 2>&1
