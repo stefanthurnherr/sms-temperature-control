@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 import time
 import os
+import subprocess
 import ConfigParser
 import gammu # for exception handling only
 
@@ -62,16 +63,18 @@ class TemperatureController(object):
                     old_error_count = self.__read_file_and_parse_first_int(f)
                     new_error_count = int(old_error_count) + 1 
                     schedule_reboot = new_error_count >= current_reboot_threshold 
-                    if new_error_count > current_reboot_threshold + reboot_threshold_increment:
-                        # can occur after manual interaction with the counters in the files
-                        next_reboot_threshold = new_error_count + reboot_threshold_increment
+                    next_reboot_threshold = new_error_count + reboot_threshold_increment
                     print "caught error number {0} while trying to process next sms, scheduling reboot? {1}.".format(new_error_count, schedule_reboot) 
                     f.seek(0) 
                     self.__write_int_to_file(f, new_error_count)
+                
                 if schedule_reboot:
                     with open(errors_threshold_file, 'w') as f:
                         self.__write_int_to_file(f, next_reboot_threshold) 
-                    print "scheduling to reboot in a few seconds, next threshold is {0} ...".format(next_reboot_threshold)
+                    return_code = subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
+                    #return_code = -99
+                    print "reboot scheduled (return code:{0}), next gammu error threshold is {1} ...".format(return_code, next_reboot_threshold)
+                    sys.stdout.flush()
 
             else:
                 with open(errors_file, 'w') as f:
