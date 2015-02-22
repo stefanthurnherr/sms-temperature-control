@@ -40,9 +40,10 @@ class TemperatureController(object):
 
     def run(self):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
+        errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
         if not os.path.exists(errors_file):
             with open(errors_file, 'w') as f:
-                f.write('0') 
+                self.__write_int_to_file(f, 0) 
         
         error_occurred = True
         try:
@@ -50,15 +51,41 @@ class TemperatureController(object):
             error_occurred = False
         finally:
             if error_occurred:
+                current_reboot_threshold = 2 #first forced reboot after 2 successive gammu errors
+                reboot_threshold_increment = 8 #reboot after 8 successive gammu errors
+                next_reboot_threshold = current_reboot_threshold + reboot_threshold_increment
+                schedule_reboot = False
+                if os.path.isfile(errors_threshold_file):
+                    with open(errors_threshold_file, 'r') as f:
+                        current_reboot_threshold = self.__read_file_and_parse_first_int(f)
                 with open(errors_file, 'r+') as f:
-                    old_error_count = f.readlines()[0] 
+                    old_error_count = self.__read_file_and_parse_first_int(f)
                     new_error_count = int(old_error_count) + 1 
+                    schedule_reboot = new_error_count >= current_reboot_threshold 
+                    if new_error_count > current_reboot_threshold + reboot_threshold_increment:
+                        # can occur after manual interaction with the counters in the files
+                        next_reboot_threshold = new_error_count + reboot_threshold_increment
+                    print "caught error number {0} while trying to process next sms, scheduling reboot? {1}.".format(new_error_count, schedule_reboot) 
                     f.seek(0) 
-                    f.write(str(new_error_count))
+                    self.__write_int_to_file(f, new_error_count)
+                if schedule_reboot:
+                    with open(errors_threshold_file, 'w') as f:
+                        self.__write_int_to_file(f, next_reboot_threshold) 
+                    print "scheduling to reboot in a few seconds, next threshold is {0} ...".format(next_reboot_threshold)
+
             else:
                 with open(errors_file, 'w') as f:
-                    f.write('0')
+                    self.__write_int_to_file(f, 0)
+                os.remove(errors_threshold_file) if os.path.isfile(errors_threshold_file) else None
 
+
+    def __read_file_and_parse_first_int(self, f):
+        first_line = f.readlines()[0]
+        return int(first_line)
+       
+    def __write_int_to_file(self, f, int_value):
+        f.write(str(int_value))
+ 
 
     def __process_next_sms(self):
         signal_strength_percentage = '--'
