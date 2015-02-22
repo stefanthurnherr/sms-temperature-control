@@ -82,7 +82,6 @@ class TemperatureController(object):
                         self.__write_int_to_file(f, next_reboot_threshold) 
                     return_code = subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
                     print "{0} reboot scheduled (return code:{1}), next gammu error threshold is {2} ...".format(self.log_ts, return_code, next_reboot_threshold)
-                    sys.stdout.flush()
 
             else:
                 os.remove(errors_file) if os.path.isfile(errors_file) else None
