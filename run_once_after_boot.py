@@ -62,6 +62,17 @@ print "{0} Sending confirmation sms to admin ({1})? {2}.".format(log_ts, admin_p
 if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
     gammu_config_section = config.get('Phone', 'gammu_config_section')
+   
+    gammu_errors_count = '0' 
+    errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
+    if os.path.isfile(errors_file):
+        with open(errors_file, 'r') as f:
+            gammu_errors_count = f.readlines()[0]
+    current_reboot_threshold = '-'
+    errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
+    if os.path.isfile(errors_threshold_file):
+        with open(errors_threshold_file, 'r') as f:
+            current_reboot_threshold = f.readlines()[0]
 
     send_success = False
     send_attempts = 0
@@ -71,9 +82,8 @@ if admin_notify_sms:
 	    send_attempts += 1
     	    
 	    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
-    	    #network_datetime = sms_sender.get_network_datetime()
 
-    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed)".format(log_ts, power_status, localIpAddress, send_attempts)
+    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed, 3G dongle error status: {4}/{5})".format(log_ts, power_status, localIpAddress, send_attempts, gammu_errors_count, current_reboot_threshold)
             
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
