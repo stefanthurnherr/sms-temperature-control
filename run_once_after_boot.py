@@ -85,7 +85,7 @@ if admin_notify_sms:
     	    
 	    sms_sender = SmsSender(gammu_config_file, gammu_config_section)	
 
-    	    reboot_message = "Hi Admin! Restart (inet:{2}) completed @ {0}. Power is {1}. ({3} sms send attempts needed, 3G dongle error status: {4}/{5})".format(log_ts, power_status, localIpAddress, send_attempts, gammu_errors_count, current_reboot_threshold)
+    	    reboot_message = "Hi Admin! Reboot done @ {0}. Power is {1}. Inet: {2}. {3} sms send attempts needed. 3G dongle error status: {4}/{5}.".format(log_ts, power_status, localIpAddress, send_attempts, gammu_errors_count, current_reboot_threshold)
             
 	    sms_sender.send_sms(reboot_message, admin_phone_number)
             send_success = True
@@ -95,6 +95,4 @@ if admin_notify_sms:
 	        time.sleep(retry_interval_seconds)
 	    else:
 		raise
-
-
 
