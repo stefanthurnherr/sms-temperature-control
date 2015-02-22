@@ -4,6 +4,7 @@
 from datetime import datetime
 import time
 import sys
+import os
 import subprocess
 
 import ConfigParser
@@ -62,14 +63,15 @@ print "{0} Sending confirmation sms to admin ({1})? {2}.".format(log_ts, admin_p
 if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
     gammu_config_section = config.get('Phone', 'gammu_config_section')
+    work_dir = config.get('System', 'work_dir')
    
     gammu_errors_count = '0' 
-    errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
+    errors_file = work_dir + '/GAMMU_ERRORS'
     if os.path.isfile(errors_file):
         with open(errors_file, 'r') as f:
             gammu_errors_count = f.readlines()[0]
     current_reboot_threshold = '-'
-    errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
+    errors_threshold_file = work_dir + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
     if os.path.isfile(errors_threshold_file):
         with open(errors_threshold_file, 'r') as f:
             current_reboot_threshold = f.readlines()[0]
