@@ -45,15 +45,14 @@ class TemperatureController(object):
     def run(self):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
         errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
-        if not os.path.isfile(errors_file):
-            with open(errors_file, 'w') as f:
-                self.__write_int_to_file(f, 0) 
         
         error_occurred = True
         try:
             sms_processed_status = self.__process_next_sms()
             error_occurred = False
+        
         finally:
+        
             if error_occurred:
                 current_reboot_threshold = 2 #first forced reboot after 2 successive gammu errors
                 reboot_threshold_increment = 8 #reboot after 8 successive gammu errors
@@ -62,14 +61,20 @@ class TemperatureController(object):
                 if os.path.isfile(errors_threshold_file):
                     with open(errors_threshold_file, 'r') as f:
                         current_reboot_threshold = self.__read_file_and_parse_first_int(f)
-                with open(errors_file, 'r+') as f:
-                    old_error_count = self.__read_file_and_parse_first_int(f)
-                    new_error_count = int(old_error_count) + 1 
-                    schedule_reboot = new_error_count >= current_reboot_threshold 
-                    next_reboot_threshold = new_error_count + reboot_threshold_increment
-                    print "{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot) 
-                    f.seek(0) 
-                    self.__write_int_to_file(f, new_error_count)
+               
+                new_error_count = 1 
+                if not os.path.isfile(errors_file):
+                    with open(errors_file, 'w') as f:
+                        self.__write_int_to_file(f, new_error_count) 
+                else:
+                    with open(errors_file, 'r+') as f:
+                        old_error_count = self.__read_file_and_parse_first_int(f)
+                        new_error_count = old_error_count + 1 
+                        f.seek(0) 
+                        self.__write_int_to_file(f, new_error_count)
+                schedule_reboot = new_error_count >= current_reboot_threshold 
+                next_reboot_threshold = new_error_count + reboot_threshold_increment
+                print "{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot) 
                 
                 if schedule_reboot:
                     with open(errors_threshold_file, 'w') as f:
@@ -79,8 +84,7 @@ class TemperatureController(object):
                     sys.stdout.flush()
 
             else:
-                with open(errors_file, 'w') as f:
-                    self.__write_int_to_file(f, 0)
+                os.remove(errors_file) if os.path.isfile(errors_file) else None
                 os.remove(errors_threshold_file) if os.path.isfile(errors_threshold_file) else None
 
 
