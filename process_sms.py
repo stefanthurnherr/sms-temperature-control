@@ -50,9 +50,11 @@ class TemperatureController(object):
         try:
             sms_processed_status = self.__process_next_sms()
             error_occurred = False
+       
+        #except:
+        #    print "error occurred while trying to process sms: ", sys.exc_info()[0] 
         
         finally:
-        
             if error_occurred:
                 current_reboot_threshold = 4 #first forced reboot after this number of successive gammu errors
                 schedule_reboot = False
@@ -61,15 +63,16 @@ class TemperatureController(object):
                         current_reboot_threshold = self.__read_file_and_parse_first_int(f)
                
                 new_error_count = 1 
-                if not os.path.isfile(errors_file):
-                    with open(errors_file, 'w') as f:
-                        self.__write_int_to_file(f, new_error_count) 
-                else:
+                if os.path.isfile(errors_file):
                     with open(errors_file, 'r+') as f:
                         old_error_count = self.__read_file_and_parse_first_int(f)
                         new_error_count = old_error_count + 1 
                         f.seek(0) 
                         self.__write_int_to_file(f, new_error_count)
+                else:
+                    with open(errors_file, 'w') as f:
+                        self.__write_int_to_file(f, new_error_count) 
+                
                 schedule_reboot = new_error_count >= current_reboot_threshold 
                 next_reboot_threshold = 2 * current_reboot_threshold
                 print "{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot) 
@@ -102,11 +105,6 @@ class TemperatureController(object):
             signal_strength_percentage = sms_fetcher.get_signal_strength_percentage()
             sms_messages = sms_fetcher.delete_get_next_sms()
         except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
-            errors_file = self.config['workDir'] + '/GAMMU_ERRORS' 
-            if not os.path.exists(errors_file): 
-               with open(errors_file, 'a'):
-                    os.utime(errors_file, None) 
-         
             timeout_after_time = time.time() - time_before_fetch
             print "{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(self.log_ts, timeout_after_time, signal_strength_percentage)
             raise # re-raise exception so we get the stacktrace to stderr
