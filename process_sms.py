@@ -54,9 +54,7 @@ class TemperatureController(object):
         finally:
         
             if error_occurred:
-                current_reboot_threshold = 2 #first forced reboot after 2 successive gammu errors
-                reboot_threshold_increment = 8 #reboot after 8 successive gammu errors
-                next_reboot_threshold = current_reboot_threshold + reboot_threshold_increment
+                current_reboot_threshold = 4 #first forced reboot after this number of successive gammu errors
                 schedule_reboot = False
                 if os.path.isfile(errors_threshold_file):
                     with open(errors_threshold_file, 'r') as f:
@@ -73,7 +71,7 @@ class TemperatureController(object):
                         f.seek(0) 
                         self.__write_int_to_file(f, new_error_count)
                 schedule_reboot = new_error_count >= current_reboot_threshold 
-                next_reboot_threshold = new_error_count + reboot_threshold_increment
+                next_reboot_threshold = 2 * current_reboot_threshold
                 print "{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot) 
                 
                 if schedule_reboot:
