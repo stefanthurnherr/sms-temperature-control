@@ -20,6 +20,9 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class TemperatureController(object):
+
+    (NO_SMS_FOUND, SMS_PROCESSED, SMS_IGNORED) = (0, 1, 2) 
+
     def __init__(self, config_parser):
         self.config = {}
 
@@ -42,13 +45,13 @@ class TemperatureController(object):
     def run(self):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
         errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
-        if not os.path.exists(errors_file):
+        if not os.path.isfile(errors_file):
             with open(errors_file, 'w') as f:
                 self.__write_int_to_file(f, 0) 
         
         error_occurred = True
         try:
-            self.__process_next_sms()
+            sms_processed_status = self.__process_next_sms()
             error_occurred = False
         finally:
             if error_occurred:
@@ -64,7 +67,7 @@ class TemperatureController(object):
                     new_error_count = int(old_error_count) + 1 
                     schedule_reboot = new_error_count >= current_reboot_threshold 
                     next_reboot_threshold = new_error_count + reboot_threshold_increment
-                    print "caught error number {0} while trying to process next sms, scheduling reboot? {1}.".format(new_error_count, schedule_reboot) 
+                    print "{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot) 
                     f.seek(0) 
                     self.__write_int_to_file(f, new_error_count)
                 
@@ -72,8 +75,7 @@ class TemperatureController(object):
                     with open(errors_threshold_file, 'w') as f:
                         self.__write_int_to_file(f, next_reboot_threshold) 
                     return_code = subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
-                    #return_code = -99
-                    print "reboot scheduled (return code:{0}), next gammu error threshold is {1} ...".format(return_code, next_reboot_threshold)
+                    print "{0} reboot scheduled (return code:{1}), next gammu error threshold is {2} ...".format(self.log_ts, return_code, next_reboot_threshold)
                     sys.stdout.flush()
 
             else:
@@ -112,7 +114,7 @@ class TemperatureController(object):
         if not sms_messages:
             # would write a log message every minute even if no sms found 
             #print "{0} No sms found by {1} - bye.".format(self.log_ts, absolute_script_path)
-            sys.exit()
+            return TemperatureController.NO_SMS_FOUND
         
         print "{0} Start sms processing by {1}".format(self.log_ts, absolute_script_path)
         
@@ -142,12 +144,12 @@ class TemperatureController(object):
         
         if self.config['myNumber'] in sender_number:
             print "  got sms from my own number - not responding in order to prevent infinite loop. Bye!"
-            sys.exit()
+            return TemperatureController.SMS_IGNORED
         elif self.config['blacklistSenders']: # empty strings are false in python
            for blacklist_sender in self.config['blacklistSenders'].split(","): 
                 if len(blacklist_sender) > 0 and blacklist_sender in sender_number: 
                     print "  this sender is in blacklist (matched '{0}') - ignoring. Bye!".format(blacklist_sender)
-                    sys.exit()
+                    return TemperatureController.SMS_IGNORED
         
         if len(sms_messages) > 1:
             print "  found sms consisting of {0} parts - only the first part will be considered.".format(len(sms_messages))
@@ -208,6 +210,7 @@ class TemperatureController(object):
         try:
             sms_sender = SmsSender(self.config['gammuConfigFile'], self.config['gammuConfigSection']) 
             sms_sender.send_sms(response_message, sender_number)
+            return TemperatureController.SMS_PROCESSED
         except (gammu.ERR_UNKNOWN):
             timeout_after_time = time.time() - time_before_send
             print "{0} Got exception after {1} seconds while trying to send sms.".format(self.log_ts, timeout_after_time)
