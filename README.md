@@ -1,4 +1,4 @@
-How to get started
+ow to get started
 ==================
 
 Required hardware
@@ -49,6 +49,8 @@ Initial software setup
     #   ensure the following lines appear in your /etc/modules :
     w1_gpio
     w1_therm
+
+    # ensure that the following module is listed in /etc/modules :
     usbserial
 
     # at this point restart if you haven't done so yet:
