@@ -8,6 +8,10 @@ work_dir=/home/pi/sms-temperature-control/work
 number=123456789
 gammu_config_file=/home/pi/.gammurc
 gammu_config_section=2
+#If your network provider supports balance inquiry by USSD code (e.g. *111#),
+# then enter the code here to be able to check the balance remotely.
+ussd_balance_inquiry=
+
 #
 # modem identifier specified as follows: vendorId:productId
 # most 3G usb modems are USB 'flip-flop' devices, e.g. they have an
