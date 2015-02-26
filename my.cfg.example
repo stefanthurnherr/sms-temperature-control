@@ -7,7 +7,7 @@ work_dir=/home/pi/sms-temperature-control/work
 # +46 123 456 789 and 0123 456 789 are caught by the check.
 number=123456789
 gammu_config_file=/home/pi/.gammurc
-gammu_config_section=1
+gammu_config_section=2
 #
 # modem identifier specified as follows: vendorId:productId
 # most 3G usb modems are USB 'flip-flop' devices, e.g. they have an
