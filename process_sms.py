@@ -12,6 +12,7 @@ import gammu # for exception handling only
 from temp import temperaturereader
 from sms import SmsFetcher
 from sms import SmsSender
+from sms import UssdFetcher
 from relay import powerswitcher
 from systemutil import systeminfo
 
@@ -35,6 +36,7 @@ class TemperatureController(object):
         self.config['myNumber'] = config_parser.get('Phone', 'number')
         self.config['gammuConfigFile'] = config_parser.get('Phone', 'gammu_config_file')
         self.config['gammuConfigSection'] = config_parser.get('Phone', 'gammu_config_section')
+        self.config['ussdCheckBalance'] = config_parser.get('Phone', 'ussd_balance_inquiry')
     
         self.config['blacklistSenders'] = config_parser.get('SmsProcessing', 'blacklist_senders')
         self.config['systemDatetimeMaxDiffNoUpdateSeconds'] = config_parser.getint('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
@@ -203,9 +205,17 @@ class TemperatureController(object):
             response_message = "Hi!\n systemTime: {0}\n upSince: {1}\n kernel: {2}\n rpiSerial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n.".format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
         
         
+        elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
+            ussd = self.config['ussdCheckBalance']
+            print "  responding with USSD reply for {0} ...".format(ussd)
+            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
+            ussd_response = ussd_fetcher.fetch_ussd_response(ussd)
+            print ussd_response
+            response_message = ussd_response
+
         else:
             print "  not recognized, answering with help message."
-            response_message = "Hi! To get current temperature, start sms with 'temp'. To check power, start sms with 'power' (followed by 'on'/'off' to control) ({0}).".format(now_string)
+            response_message = "Hi! To get temperature, start sms with 'temp'. To check power, start sms with 'power' (followed by 'on'/'off' to control). Other commands: systeminfo and checkbalance ({0}).".format(now_string)
         
         time_before_send = time.time()
         try:

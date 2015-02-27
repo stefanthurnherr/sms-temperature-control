@@ -14,6 +14,9 @@ def get_init_state_machine(gammu_config_file, gammu_config_section):
     gammu_sm.Init(Replies=1)
     return gammu_sm
 
+def encode_sms(smsinfo):
+    return gammu.EncodeSMS(smsinfo)
+
 def get_signal_strength_percentage(gammu_state_machine):
     signal_quality = gammu_state_machine.GetSignalQuality()
     return signal_quality['SignalPercent']
