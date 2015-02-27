@@ -188,17 +188,19 @@ class TemperatureController(object):
         
         elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
             print "  responding with system info:"
+            up_since = systeminfo.get_last_reboot_date_time()
             kernelVersion = systeminfo.get_kernel_version()
             rpiSerialNumber = systeminfo.get_rpi_serial_number()
             localInetAddress = systeminfo.get_inet_address()
             gitRevision = systeminfo.get_git_revision()
-            print "    system datetime   : {0}".format(now_string)
-            print "    kernel version    : {0}".format(kernelVersion)
-            print "    RPi serial number : {0}".format(rpiSerialNumber)
-            print "    inet address      : {0}".format(localInetAddress)
-            print "    git revision      : {0}".format(gitRevision)
-            print "    Signal strength   : {0}%".format(signal_strength_percentage)
-            response_message = "System info:\n systemTime: {0}\n kernel: {1}\n rpiSerial: {2}\n inet: {3}\n gitRev: {4}\n signalStrength: {5}%\n.".format(now_string, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
+            print "    system datetime  : {0}".format(now_string)
+            print "    up since         : {0}".format(up_since)
+            print "    kernel version   : {0}".format(kernelVersion)
+            print "    RPi serial       : {0}".format(rpiSerialNumber)
+            print "    inet address     : {0}".format(localInetAddress)
+            print "    git revision     : {0}".format(gitRevision)
+            print "    Signal strength  : {0}%".format(signal_strength_percentage)
+            response_message = "Hi!\n systemTime: {0}\n upSince: {1}\n kernel: {2}\n rpiSerial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n.".format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
         
         
         else:

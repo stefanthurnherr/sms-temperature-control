@@ -4,6 +4,11 @@
 import os
 from subprocess import Popen, PIPE
 
+def get_last_reboot_date_time():
+    who_out = __get_cmd_stdout(['who', '-b'])
+    date_time_index = who_out.find('boot') + 4
+    return who_out[date_time_index:].strip()
+
 
 def get_kernel_version():
     return __get_cmd_stdout(['uname', '-r']).strip()
@@ -20,12 +25,16 @@ def get_rpi_serial_number():
         return None
 
 
-def get_inet_address():
+def get_inet_address(addIface=False):
     interfaceNames = ['eth0', 'eth1', 'wlan0']
     for interfaceName in interfaceNames:
+        ifaceSuffix = ''
+        if addIface:
+            ifaceSuffix = ' (' + interfaceName + ')'
+        
         ipAddress = __extract_inet_string(interfaceName)
         if ipAddress: 
-            return ipAddress + ' (' + interfaceName + ')'
+            return ipAddress + ifaceSuffix
     return None
 
 
