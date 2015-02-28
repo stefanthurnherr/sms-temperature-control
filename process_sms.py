@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from datetime import datetime
+from datetime import datetime,timedelta
 import time
 import os
 import subprocess
@@ -48,16 +48,17 @@ class TemperatureController(object):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
         errors_threshold_file = self.config['workDir'] + '/ERRORS_THRESHOLD_BEFORE_REBOOT'
         
-        error_occurred = True
+        sms_processing_error = True
         try:
             sms_processed_status = self.__process_next_sms()
-            error_occurred = False
-       
+            sms_processing_error = False
+            self.__check_balance_if_necessary()      
+ 
         #except:
         #    print "error occurred while trying to process sms: ", sys.exc_info()[0] 
         
         finally:
-            if error_occurred:
+            if sms_processing_error:
                 current_reboot_threshold = 4 #first forced reboot after this number of successive gammu errors
                 schedule_reboot = False
                 if os.path.isfile(errors_threshold_file):
@@ -163,10 +164,10 @@ class TemperatureController(object):
             if temp_raw: 
                 temp = round(temp_raw, 1)
                 print "  responding with temperature: {0} Celsius.".format(temp)
-                response_message = "Hi! Current temperature here is {0} Celsius ({1}).".format(temp, now_string)
+                response_message = u'Hi! Current temperature here is {0} Celsius ({1}).'.format(temp, now_string)
             else:
                 print "  temperature could not be read."
-                response_message = "Hi! Temperature sensor is offline, check log files."
+                response_message = u'Hi! Temperature sensor is offline, check log files.'
         
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
             requested_state = ''
@@ -184,9 +185,9 @@ class TemperatureController(object):
             
             print "  responding with power status: {0} (was: {1}).".format(power_status, power_status_before)
             if requested_state:
-                response_message = "Hi! Power has been switched {0}, was {1} ({2}).".format(power_status, power_status_before, now_string)
+                response_message = u'Hi! Power has been switched {0}, was {1} ({2}).'.format(power_status, power_status_before, now_string)
             else:
-                response_message = "Hi! Power is currently {0} ({1}).".format(power_status, now_string)
+                response_message = u'Hi! Power is currently {0} ({1}).'.format(power_status, now_string)
         
         elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
             print "  responding with system info:"
@@ -202,20 +203,21 @@ class TemperatureController(object):
             print "    inet address     : {0}".format(localInetAddress)
             print "    git revision     : {0}".format(gitRevision)
             print "    Signal strength  : {0}%".format(signal_strength_percentage)
-            response_message = "Hi!\n systemTime: {0}\n upSince: {1}\n kernel: {2}\n rpiSerial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n.".format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
+            response_message = u'Hi!\n systemTime: {0}\n upSince: {1}\n kernel: {2}\n rpiSerial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n.'.format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
         
         
         elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
             ussd = self.config['ussdCheckBalance']
-            print "  responding with USSD reply for {0} ...".format(ussd)
+            print "  responding with USSD reply for {0}:".format(ussd)
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
-            ussd_response = ussd_fetcher.fetch_ussd_response(ussd)
-            print ussd_response
-            response_message = ussd_response
+            ussd_reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
+            ussd_reply_unicode = ussd_fetcher.convert_reply_raw_to_unicode(ussd_reply_raw)
+            print ussd_reply_unicode.encode('ascii', 'replace')
+            response_message = ussd_reply_unicode
 
         else:
             print "  not recognized, answering with help message."
-            response_message = "Hi! 'temp' to get current temperature, 'power' (+' on'/' off') to get/change power status. Other commands: 'systeminfo', 'checkbalance'."
+            response_message = u"Hi! 'temp' to get current temperature, 'power' (+' on'/' off') to get/change power status. Other commands: 'systeminfo', 'checkbalance'."
         
         time_before_send = time.time()
         try:
@@ -227,6 +229,27 @@ class TemperatureController(object):
             print "{0} Got exception after {1} seconds while trying to send sms.".format(self.log_ts, timeout_after_time)
             raise # re-raise exception so we get the stacktrace to stderr
 
+
+    def __check_balance_if_necessary(self):
+        balance_file = self.config['workDir'] + '/LAST_BALANCE'
+        do_check = True
+        if os.path.exists(balance_file):
+            last_checked_time = datetime.fromtimestamp(os.path.getctime(balance_file))
+            do_check = last_checked_time < datetime.now() - timedelta(days=2)
+            if do_check:
+                os.remove(balance_file)
+
+        if do_check:
+            ussd = self.config['ussdCheckBalance']
+            print "{0} Updating balance using USSD '{1}' as cached value is non-existing or outdated...".format(self.log_ts, ussd)
+            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
+            ussd_response = ussd_fetcher.fetch_ussd_response(ussd)
+            with open(balance_file, 'w') as f:
+                f.write(ussd_response)
+
+
+
+# ------------------------------------------------------------------------------- #
 
 if __name__ == '__main__':
     config_parser = ConfigParser.SafeConfigParser()
