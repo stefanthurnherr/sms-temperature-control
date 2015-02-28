@@ -215,7 +215,7 @@ class TemperatureController(object):
 
         else:
             print "  not recognized, answering with help message."
-            response_message = "Hi! To get temperature, start sms with 'temp'. To check power, start sms with 'power' (followed by 'on'/'off' to control). Other commands: systeminfo and checkbalance ({0}).".format(now_string)
+            response_message = "Hi! 'temp' to get current temperature, 'power' ('on'/'off') to get/change power status. Other commands: 'systeminfo', 'checkbalance' ({0}).".format(now_string)
         
         time_before_send = time.time()
         try:
