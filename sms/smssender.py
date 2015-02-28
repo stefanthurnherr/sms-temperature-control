@@ -11,18 +11,10 @@ class SmsSender(object):
         self.gammu_state_machine = _gammuhelper.get_init_state_machine(gammu_config_file, gammu_config_section)
 
     def send_sms(self, text, number):
-
-        text_cleaned = '' 
-        for char in list(text):
-            if ord(char) < 128:
-                text_cleaned += char
-            #else:
-            #    text_cleaned += '?'
-
         SMS = {
             'Class': 1,                #SMS Class
-            'Unicode': False,
-            'Text': text_cleaned,              #Message
+            'Unicode': True,
+            'Text': text,              #Message
             'SMSC': {'Location': 1},
             'Number': number,          #The phone number
         }
@@ -55,7 +47,7 @@ class SmsSender(object):
 
 
 if __name__ == "__main__":
-    hello_text = "Raspberry Pi says/sÃger: Hi! (a gammu-python test sms)"
+    hello_text = "Raspberry Pi says: Hi! (a gammu-python test sms)"
 
     phone_number = ''
     if len(sys.argv) >= 2:
