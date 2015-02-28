@@ -17,6 +17,8 @@ class UssdFetcher(object):
 
  
     def __parse_ussd_reply(self, ussd_reply):
+        #print "ussd reply:"
+        #print ussd_reply
         if "Service reply" in ussd_reply:
             lines = ussd_reply.splitlines()
             for line in lines:
