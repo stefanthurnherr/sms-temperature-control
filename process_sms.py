@@ -217,7 +217,7 @@ class TemperatureController(object):
             self.__update_balance_if_necessary(force=True)
             balance_info = self.__get_cached_balance_info()
             print '  ' + balance_info.encode('ascii', 'replace')
-            response_message = balance_info
+            response_message = u'Hi! Current balance info:\n{0}'.format(balance_info)
 
         else:
             print "  not recognized, answering with help message."
