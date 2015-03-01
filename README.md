@@ -109,7 +109,7 @@ Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
 
 Ideas to be implemented in the future
 -------------------------------------
-* Use gammu's USSD interface to warn Administrator if balance (for prepaid SIM cards) is low
+* Warn administrator if balance falls below (configurable) threshold (for prepaid SIM cards)
 
 
 How to install a python module
