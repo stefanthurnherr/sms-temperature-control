@@ -38,6 +38,7 @@ class TemperatureController(object):
         self.config['gammuConfigFile'] = config_parser.get('Phone', 'gammu_config_file')
         self.config['gammuConfigSection'] = config_parser.get('Phone', 'gammu_config_section')
         self.config['ussdCheckBalance'] = config_parser.get('Phone', 'ussd_balance_inquiry')
+        self.config['balanceFetchInterval'] = config_parser.getint('Phone', 'ussd_balance_auto_fetch_interval_days')
         self.config['balanceInfoRegex'] = config_parser.get('Phone', 'ussd_balance_reply_line_regex')
     
         self.config['blacklistSenders'] = config_parser.get('SmsProcessing', 'blacklist_senders')
@@ -235,16 +236,18 @@ class TemperatureController(object):
 
     def __update_balance_if_necessary(self, force=False):
         balance_file = self.config['workDir'] + '/LAST_BALANCE'
-        do_check = True
+        ussd = self.config['ussdCheckBalance']
+        balance_fetch_interval = self.config['balanceFetchInterval']
+        can_do_check = True and ussd
+        do_check = force
         if os.path.exists(balance_file):
             last_checked_time = datetime.fromtimestamp(os.path.getctime(balance_file))
-            do_check = last_checked_time < datetime.now() - timedelta(days=2)
-            if do_check:
+            do_check = do_check or (balance_fetch_interval > 0 and (last_checked_time < datetime.now() - timedelta(days=balance_fetch_interval)))
+            if (not can_do_check) or do_check:
                 os.remove(balance_file)
 
-        ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
-        if do_check or force:
-            ussd = self.config['ussdCheckBalance']
+        if can_do_check and do_check:
+            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
             reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
                 f.write(reply_raw)
