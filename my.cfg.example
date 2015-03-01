@@ -11,6 +11,9 @@ gammu_config_section=2
 #If your network provider supports balance inquiry by USSD code (e.g. *111#),
 # then enter the code here to be able to check the balance remotely.
 ussd_balance_inquiry=
+#Optionally specify a regex to filter the USSD reply. Use a group to filter
+# the regex match.
+ussd_balance_reply_line_regex=
 
 #
 # modem identifier specified as follows: vendorId:productId

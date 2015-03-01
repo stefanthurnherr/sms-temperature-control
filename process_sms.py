@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
 from datetime import datetime,timedelta
 import time
 import os
@@ -37,6 +38,7 @@ class TemperatureController(object):
         self.config['gammuConfigFile'] = config_parser.get('Phone', 'gammu_config_file')
         self.config['gammuConfigSection'] = config_parser.get('Phone', 'gammu_config_section')
         self.config['ussdCheckBalance'] = config_parser.get('Phone', 'ussd_balance_inquiry')
+        self.config['balanceInfoRegex'] = config_parser.get('Phone', 'ussd_balance_reply_line_regex')
     
         self.config['blacklistSenders'] = config_parser.get('SmsProcessing', 'blacklist_senders')
         self.config['systemDatetimeMaxDiffNoUpdateSeconds'] = config_parser.getint('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
@@ -52,7 +54,7 @@ class TemperatureController(object):
         try:
             sms_processed_status = self.__process_next_sms()
             sms_processing_error = False
-            self.__check_balance_if_necessary()      
+            self.__update_balance_if_necessary()      
  
         #except:
         #    print "error occurred while trying to process sms: ", sys.exc_info()[0] 
@@ -196,6 +198,7 @@ class TemperatureController(object):
             rpiSerialNumber = systeminfo.get_rpi_serial_number()
             localInetAddress = systeminfo.get_inet_address()
             gitRevision = systeminfo.get_git_revision()
+            balance_info = self.__get_cached_balance_info()
             print "    system datetime  : {0}".format(now_string)
             print "    up since         : {0}".format(up_since)
             print "    kernel version   : {0}".format(kernelVersion)
@@ -203,15 +206,17 @@ class TemperatureController(object):
             print "    inet address     : {0}".format(localInetAddress)
             print "    git revision     : {0}".format(gitRevision)
             print "    Signal strength  : {0}%".format(signal_strength_percentage)
-            response_message = u'Hi!\n systemTime: {0}\n upSince: {1}\n kernel: {2}\n rpiSerial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n.'.format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage)
+            print "    Balance          : {0}".format(balance_info)
+            response_message = u'Hi!\n sysTime: {0}\n uptime: {1}\n kernel: {2}\n serial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n $$: {7}.'.format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage, balance_info)
         
         
         elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
             ussd = self.config['ussdCheckBalance']
             print "  responding with USSD reply for {0}:".format(ussd)
-            ussd_reply_unicode = self.__check_balance_if_necessary(force=True)
-            print ussd_reply_unicode.encode('ascii', 'replace')
-            response_message = ussd_reply_unicode
+            self.__update_balance_if_necessary(force=True)
+            balance_info = self.__get_cached_balance_info()
+            print '  ' + balance_info.encode('ascii', 'replace')
+            response_message = balance_info
 
         else:
             print "  not recognized, answering with help message."
@@ -228,7 +233,7 @@ class TemperatureController(object):
             raise # re-raise exception so we get the stacktrace to stderr
 
 
-    def __check_balance_if_necessary(self, force=False):
+    def __update_balance_if_necessary(self, force=False):
         balance_file = self.config['workDir'] + '/LAST_BALANCE'
         do_check = True
         if os.path.exists(balance_file):
@@ -240,18 +245,37 @@ class TemperatureController(object):
         ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
         if do_check or force:
             ussd = self.config['ussdCheckBalance']
-            print "{0} Updating balance using USSD '{1}' (forced={2}) ...".format(self.log_ts, ussd, force)
             reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
                 f.write(reply_raw)
-            return ussd_fetcher.convert_reply_raw_to_unicode(reply_raw)
 
-        else:
+
+    def __get_cached_balance_info(self):
+        balance_file = self.config['workDir'] + '/LAST_BALANCE'
+        if os.path.isfile(balance_file):
+            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
             with open(balance_file, 'r') as f:
                 file_content = f.read()
-                return ussd_fetcher.convert_reply_raw_to_unicode(file_content)
+                reply_unicode = ussd_fetcher.convert_reply_raw_to_unicode(file_content)
+                balance_regex_raw = self.config['balanceInfoRegex']
+                if not balance_regex_raw:
+                    return reply_unicode
+                balance_regex = re.compile(balance_regex_raw, flags=re.UNICODE|re.MULTILINE)
+                match = re.search(balance_regex, reply_unicode)
+                return match.group(len(match.groups())) if match else None
+ 
+        return None
+
 
 # ------------------------------------------------------------------------------- #
+
+def test():
+    print "welcome to test()"
+    config_parser = ConfigParser.SafeConfigParser()
+    config_parser.read('/home/pi/sms-temperature-control/my.cfg')
+
+    tc = TemperatureController(config_parser)
+
 
 if __name__ == '__main__':
     config_parser = ConfigParser.SafeConfigParser()
