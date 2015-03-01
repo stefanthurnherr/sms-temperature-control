@@ -239,7 +239,7 @@ class TemperatureController(object):
         ussd = self.config['ussdCheckBalance']
         balance_fetch_interval = self.config['balanceFetchInterval']
         can_do_check = True and ussd
-        do_check = force
+        do_check = force or not os.path.exists(balance_file)
         if os.path.exists(balance_file):
             last_checked_time = datetime.fromtimestamp(os.path.getctime(balance_file))
             do_check = do_check or (balance_fetch_interval > 0 and (last_checked_time < datetime.now() - timedelta(days=balance_fetch_interval)))
@@ -247,10 +247,12 @@ class TemperatureController(object):
                 os.remove(balance_file)
 
         if can_do_check and do_check:
+            print '{0} Updating cached balance (force={1}) using USSD code \'{2}\' ...'.format(self.log_ts, force, ussd)
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
             reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
                 f.write(reply_raw)
+            print '{0} done.'.format(self.log_ts)
 
 
     def __get_cached_balance_info(self):
