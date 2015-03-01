@@ -209,9 +209,7 @@ class TemperatureController(object):
         elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
             ussd = self.config['ussdCheckBalance']
             print "  responding with USSD reply for {0}:".format(ussd)
-            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
-            ussd_reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
-            ussd_reply_unicode = ussd_fetcher.convert_reply_raw_to_unicode(ussd_reply_raw)
+            ussd_reply_unicode = self.__check_balance_if_necessary(force=True)
             print ussd_reply_unicode.encode('ascii', 'replace')
             response_message = ussd_reply_unicode
 
@@ -230,7 +228,7 @@ class TemperatureController(object):
             raise # re-raise exception so we get the stacktrace to stderr
 
 
-    def __check_balance_if_necessary(self):
+    def __check_balance_if_necessary(self, force=False):
         balance_file = self.config['workDir'] + '/LAST_BALANCE'
         do_check = True
         if os.path.exists(balance_file):
@@ -239,15 +237,19 @@ class TemperatureController(object):
             if do_check:
                 os.remove(balance_file)
 
-        if do_check:
+        ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
+        if do_check or force:
             ussd = self.config['ussdCheckBalance']
-            print "{0} Updating balance using USSD '{1}' as cached value is non-existing or outdated...".format(self.log_ts, ussd)
-            ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
-            ussd_response = ussd_fetcher.fetch_ussd_response(ussd)
+            print "{0} Updating balance using USSD '{1}' (forced={2}) ...".format(self.log_ts, ussd, force)
+            reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
-                f.write(ussd_response)
+                f.write(reply_raw)
+            return ussd_fetcher.convert_reply_raw_to_unicode(reply_raw)
 
-
+        else:
+            with open(balance_file, 'r') as f:
+                file_content = f.read()
+                return ussd_fetcher.convert_reply_raw_to_unicode(file_content)
 
 # ------------------------------------------------------------------------------- #
 
