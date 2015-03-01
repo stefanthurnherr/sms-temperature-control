@@ -9,6 +9,7 @@ class UssdFetcher(object):
     def __init__(self, gammu_config_file, gammu_config_section):
         self.gammu_config_file = gammu_config_file
         self.gammu_config_section = gammu_config_section
+        self.reply_encoding = 'latin1'
 
     def fetch_ussd_reply_raw(self, ussd):
         config_file = self.gammu_config_file
@@ -17,18 +18,24 @@ class UssdFetcher(object):
         if u'Service reply' in response:
             for line in response.splitlines():
                 if line.startswith(u'Service reply'):
-                    service_reply_raw = line[line.find('0'):-1]
-                    return service_reply_raw
+                    service_reply_raw = line[line.find('"')+1:-1]
+                    return self.__remove_zero_padding_from_reply_raw(service_reply_raw)
         return None
+
+
+    def __remove_zero_padding_from_reply_raw(self, reply_raw):
+        padded_unicode = self.convert_reply_raw_to_unicode(reply_raw)
+        unpadded_unicode = padded_unicode.replace('\0', '')
+        return self.convert_reply_unicode_to_raw(unpadded_unicode)
 
  
     def convert_reply_raw_to_unicode(self, reply_raw):
-        reply_unicode = reply_raw.decode('hex').decode('latin1')
+        reply_unicode = reply_raw.decode('hex').decode(self.reply_encoding)
         return reply_unicode
 
 
     def convert_reply_unicode_to_raw(self, reply_unicode):
-        reply_raw = reply_unicode.encode('latin1').encode('hex')
+        reply_raw = reply_unicode.encode(self.reply_encoding).encode('hex')
         return reply_raw
 
 
