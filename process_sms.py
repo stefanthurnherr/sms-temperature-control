@@ -199,7 +199,7 @@ class TemperatureController(object):
             rpiSerialNumber = systeminfo.get_rpi_serial_number()
             localInetAddress = systeminfo.get_inet_address()
             gitRevision = systeminfo.get_git_revision()
-            balance_info = self.__get_cached_balance_info()
+            balance_info = self.__get_cached_balance_info(short=True)
             print "    system datetime  : {0}".format(now_string)
             print "    up since         : {0}".format(up_since)
             print "    kernel version   : {0}".format(kernelVersion)
@@ -213,11 +213,13 @@ class TemperatureController(object):
         
         elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
             ussd = self.config['ussdCheckBalance']
-            print "  responding with USSD reply for {0}:".format(ussd)
             self.__update_balance_if_necessary(force=True)
-            balance_info = self.__get_cached_balance_info()
+            balance_tuple = self.__get_cached_balance_info()
+            balance_info = balance_info[0]
+            balance_last_updated = balance_info[1]
+            print "  responding with USSD reply for {0}:".format(ussd)
             print '  ' + balance_info.encode('ascii', 'replace')
-            response_message = u'Hi! Current balance info:\n{0}'.format(balance_info)
+            response_message = u'Hi! Current balance info (last updated {1}):\n{0}'.format(balance_info, balance_last_updated)
 
         else:
             print "  not recognized, answering with help message."
@@ -241,8 +243,8 @@ class TemperatureController(object):
         can_do_check = True and ussd
         do_check = force or not os.path.exists(balance_file)
         if os.path.exists(balance_file):
-            last_checked_time = datetime.fromtimestamp(os.path.getctime(balance_file))
-            do_check = do_check or (balance_fetch_interval > 0 and (last_checked_time < datetime.now() - timedelta(days=balance_fetch_interval)))
+            last_updated_time = datetime.fromtimestamp(os.path.getctime(balance_file))
+            do_check = do_check or (balance_fetch_interval > 0 and (last_updated_time < datetime.now() - timedelta(days=balance_fetch_interval)))
             if (not can_do_check) or do_check:
                 os.remove(balance_file)
 
@@ -255,10 +257,11 @@ class TemperatureController(object):
             print '{0} done.'.format(self.log_ts)
 
 
-    def __get_cached_balance_info(self):
+    def __get_cached_balance_info(self, short=False):
         balance_file = self.config['workDir'] + '/LAST_BALANCE'
         if os.path.isfile(balance_file):
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
+            last_updated_time = datetime.fromtimestamp(os.path.getctime(balance_file))
             with open(balance_file, 'r') as f:
                 file_content = f.read()
                 reply_unicode = ussd_fetcher.convert_reply_raw_to_unicode(file_content)
@@ -267,7 +270,12 @@ class TemperatureController(object):
                     return reply_unicode
                 balance_regex = re.compile(balance_regex_raw, flags=re.UNICODE|re.MULTILINE)
                 match = re.search(balance_regex, reply_unicode)
-                return match.group(len(match.groups())) if match else None
+
+                if match:
+                    if short and match.groups():
+                        return match.group(1)
+                    else:
+                        return (match.group(0), last_updated_time)
  
         return None
 
