@@ -214,12 +214,10 @@ class TemperatureController(object):
         elif sender_message_raw and sender_message_raw.lower().startswith('checkbalance'):
             ussd = self.config['ussdCheckBalance']
             self.__update_balance_if_necessary(force=True)
-            balance_tuple = self.__get_cached_balance_info()
-            balance_info = balance_info[0]
-            balance_last_updated = balance_info[1]
+            balance_info = self.__get_cached_balance_info()
             print "  responding with USSD reply for {0}:".format(ussd)
             print '  ' + balance_info.encode('ascii', 'replace')
-            response_message = u'Hi! Current balance info (last updated {1}):\n{0}'.format(balance_info, balance_last_updated)
+            response_message = u'Hi! Current balance info:\n{0}'.format(balance_info)
 
         else:
             print "  not recognized, answering with help message."
@@ -261,7 +259,6 @@ class TemperatureController(object):
         balance_file = self.config['workDir'] + '/LAST_BALANCE'
         if os.path.isfile(balance_file):
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
-            last_updated_time = datetime.fromtimestamp(os.path.getctime(balance_file))
             with open(balance_file, 'r') as f:
                 file_content = f.read()
                 reply_unicode = ussd_fetcher.convert_reply_raw_to_unicode(file_content)
@@ -275,7 +272,7 @@ class TemperatureController(object):
                     if short and match.groups():
                         return match.group(1)
                     else:
-                        return (match.group(0), last_updated_time)
+                        return match.group(0)
  
         return None
 
