@@ -20,7 +20,6 @@ log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 print "{0} -------------------REBOOT-----------------------".format(log_ts)
 
 powerswitcher = PowerSwitcher()
-powerswitcher.init_pins()
 power_status = powerswitcher.get_status_string()
 
 print "{0} Successfully initialized pins after (re-)boot, power is now {1} ...".format(log_ts, power_status)

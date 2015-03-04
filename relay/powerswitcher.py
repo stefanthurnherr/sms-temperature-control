@@ -17,12 +17,10 @@ class PowerSwitcher(object):
         GPIO.setmode(GPIO_MODE)
         GPIO.setwarnings(warnings)
         GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
+        
+        self.set_status_off()
 
  
-    def init_pins(self):
-        self.__set_status_off()
-
-
     def get_status_string(self):
         power_status = self.__get_status()
         if power_status == 1:
