@@ -279,6 +279,9 @@ class TemperatureController(object):
 
 # ------------------------------------------------------------------------------- #
 
+# How to run this method from command-line:
+#  python -c 'from process_sms import test; test()'
+#
 def test():
     print "welcome to test()"
     config_parser = ConfigParser.SafeConfigParser()
