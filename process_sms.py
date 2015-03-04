@@ -14,7 +14,7 @@ from temp import temperaturereader
 from sms import SmsFetcher
 from sms import SmsSender
 from sms import UssdFetcher
-from relay import powerswitcher
+from relay import PowerSwitcher
 from systemutil import systeminfo
 
 
