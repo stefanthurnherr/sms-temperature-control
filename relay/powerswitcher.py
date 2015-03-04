@@ -15,52 +15,55 @@ def init_pins(warnings=False):
     setup(warnings)
     set_status_off()
 
+
 def get_status_string_safe(warnings=False):
     setup(warnings) 
     return get_status_string()
+
 
 def set_status_on_safe(warnings=False):
     setup(warnings) 
     if get_status() == 1:
         set_status_on()
 
+
 def set_status_off_safe(warnings=False):
     setup(warnings) 
     if get_status() == 0:
         set_status_off()
 
-#private
-def setup(warnings=True):
+
+def __setup(warnings=True):
     GPIO.setmode(GPIO_MODE)
     GPIO.setwarnings(warnings)
     GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
 
-#private
-def tear_down():
+
+def __tear_down():
     GPIO.cleanup(CHANNEL_BCM_ID)
 
-#private
-def get_status():
+
+def __get_status():
     return GPIO.input(CHANNEL_BCM_ID)
 
-#private
-def get_status_string():
+
+def __get_status_string():
     power_status = get_status()
     if power_status == 1:
         return 'OFF'
     else:
         return'ON'
 
-#private
-def set_status_on():
+
+def __set_status_on():
     return set_channel_value_to(GPIO.LOW)
 
-#private
-def set_status_off():
+
+def __set_status_off():
     return set_channel_value_to(GPIO.HIGH)
 
-#private
-def set_channel_value_to(gpioValue):
+
+def __set_channel_value_to(gpioValue):
     GPIO.output(CHANNEL_BCM_ID, gpioValue)
     return get_status()
 
