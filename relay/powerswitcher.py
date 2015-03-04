@@ -10,81 +10,67 @@ import RPi.GPIO as GPIO
 GPIO_MODE = GPIO.BCM
 CHANNEL_BCM_ID = 22
 
+class PowerSwitcher(object):
+    def __init__(self, gpio_ids=[CHANNEL_BCM_ID], warnings=False):
+        self.gpio_ids = gpio_ids
+        
+        GPIO.setmode(GPIO_MODE)
+        GPIO.setwarnings(warnings)
+        GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
 
-def init_pins(warnings=False):
-    setup(warnings)
-    set_status_off()
-
-
-def get_status_string_safe(warnings=False):
-    setup(warnings) 
-    return get_status_string()
-
-
-def set_status_on_safe(warnings=False):
-    setup(warnings) 
-    if get_status() == 1:
-        set_status_on()
+ 
+    def init_pins(self):
+        self.__set_status_off()
 
 
-def set_status_off_safe(warnings=False):
-    setup(warnings) 
-    if get_status() == 0:
-        set_status_off()
+    def get_status_string(self):
+        power_status = self.__get_status()
+        if power_status == 1:
+            return 'OFF'
+        else:
+            return 'ON'
 
 
-def __setup(warnings=True):
-    GPIO.setmode(GPIO_MODE)
-    GPIO.setwarnings(warnings)
-    GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
+    def set_status_on(self):
+        if self.__get_status() == 1:
+            self.__set_channel_value_to(GPIO.LOW)
 
 
-def __tear_down():
-    GPIO.cleanup(CHANNEL_BCM_ID)
+    def set_status_off(self):
+        if self.__get_status() == 0:
+            self.__set_channel_value_to(GPIO.HIGH)
 
 
-def __get_status():
-    return GPIO.input(CHANNEL_BCM_ID)
+    def tear_down(self):
+        GPIO.cleanup(CHANNEL_BCM_ID)
 
 
-def __get_status_string():
-    power_status = get_status()
-    if power_status == 1:
-        return 'OFF'
-    else:
-        return'ON'
+    def __get_status(self):
+        return GPIO.input(CHANNEL_BCM_ID)
 
 
-def __set_status_on():
-    return set_channel_value_to(GPIO.LOW)
-
-
-def __set_status_off():
-    return set_channel_value_to(GPIO.HIGH)
-
-
-def __set_channel_value_to(gpioValue):
-    GPIO.output(CHANNEL_BCM_ID, gpioValue)
-    return get_status()
+    def __set_channel_value_to(self, gpioValue):
+        GPIO.output(CHANNEL_BCM_ID, gpioValue)
+        return self.__get_status()
 
 
 if __name__ == "__main__":
 
-    setup()
+    ps = PowerSwitcher(warnings=True)
 
-    print "initial value is {0}".format(get_status())
+    print "initial value is {0}".format(ps.get_status_string())
 
     intervalSeconds = 5
     iteration = 1
     max_iteration = 3
     while iteration <= max_iteration:
         print "iteration {0}/{1}".format(iteration, max_iteration)
-        set_status_on()
-        print "  set to on - value now is {0}".format(get_status())
+        ps.set_status_on()
+        print "  set to on - value now is {0}".format(ps.get_status_string())
         time.sleep(intervalSeconds)
-        set_status_off()
-        print "  set to off - value now is {0}".format(get_status())
+        ps.set_status_off()
+        print "  set to off - value now is {0}".format(ps.get_status_string())
         time.sleep(intervalSeconds)
         iteration = iteration + 1
 
-    tear_down()
+    ps.tear_down()

@@ -174,17 +174,18 @@ class TemperatureController(object):
         
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
             requested_state = ''
-            power_status_before = powerswitcher.get_status_string_safe()
+            powerswitcher = PowerSwitcher()
+            power_status_before = powerswitcher.get_status_string()
             if sender_message_raw.lower().startswith('power on'):
                 requested_state = 'ON'
-                powerswitcher.set_status_on_safe()
+                powerswitcher.set_status_on()
                 print "  power has been set ON"
             elif sender_message_raw.lower().startswith('power off'):
                 requested_state = 'OFF'
-                powerswitcher.set_status_off_safe()
+                powerswitcher.set_status_off()
                 print "  power has been set OFF"
         
-            power_status = powerswitcher.get_status_string_safe()
+            power_status = powerswitcher.get_status_string()
             
             print "  responding with power status: {0} (was: {1}).".format(power_status, power_status_before)
             if requested_state:
