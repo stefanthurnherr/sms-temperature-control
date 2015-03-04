@@ -10,7 +10,7 @@ import subprocess
 import ConfigParser
 
 import gammu # for exception handling only
-from relay import powerswitcher
+from relay import PowerSwitcher
 from sms import SmsSender
 from systemutil import systeminfo
 
@@ -19,8 +19,9 @@ log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 print "{0} -------------------REBOOT-----------------------".format(log_ts)
 
+powerswitcher = PowerSwitcher()
 powerswitcher.init_pins()
-power_status = powerswitcher.get_status_string_safe()
+power_status = powerswitcher.get_status_string()
 
 print "{0} Successfully initialized pins after (re-)boot, power is now {1} ...".format(log_ts, power_status)
 
