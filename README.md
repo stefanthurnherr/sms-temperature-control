@@ -1,4 +1,4 @@
-ow to get started
+How to get started
 ==================
 
 Required hardware
@@ -9,7 +9,7 @@ Required hardware
 * Relay (I used a [5V AC250V10A 1-channel relay module](http://www.ebay.com/itm/5V-One-1-Channel-Relay-Module-Board-Shield-For-PIC-AVR-DSP-ARM-MCU-Arduino-MKLP-/251804970941?pt=LH_DefaultDomain_0&hash=item3aa0beefbd))
 * GSM/3G USB modem, unlocked (I used [gsmliberty.net](http://www.gsmliberty.net) to unlock mine)
 * valid SIM card (prepaid, preferably refillable via internet)
-* Powered USB hub ([I used this 4-port hub from i-tec](http://www.i-tec-europe.eu/?t=3&v=265&lng=en), product number U2HUB412: small size and delivers enough current to power the RPi)
+* Powered USB hub ([I used this 4-port hub from i-tec](http://www.i-tec-europe.eu/?t=3&v=265&lng=en), product number U2HUB412: small size and delivers enough current to power both the 3G USB modem and the RPi)
 * Maybe some angled USB cables to save some space when packaging the whole thing (I bought one [here](http://www.angledcables.com/cables.html))
 * A rasp and a drilling machine to make the holes for the cables
 * Power cable with male and female plug; cable will be cut in half to put the relay in between
@@ -17,7 +17,7 @@ Required hardware
 Initial hardware setup
 ----------------------
 * Connect the temperature sensor to correct power/ground/data pins on the Pi using a 'pullup' resistor of 4K7 Ohm. See sensor specification and my corresponding python script. Adafruit.com also has a nice tutorial [here](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-11-ds18b20-temperature-sensing/hardware). My temperature sensor has cable colors red=3V3, black=GND and white=DATA.
-* Connect the relay to the correct Pi pins - check with specification and my corresponding python script
+* Connect the relay to the configured (in my.cfg) GPIO pins on the Pi - see your relay specification
 
 
 Initial software setup
@@ -110,6 +110,8 @@ Final version of the box: ![ScreenShot](/screenshots/readme-closedbox.jpg)
 Ideas to be implemented in the future
 -------------------------------------
 * Warn administrator if balance falls below (configurable) threshold (for prepaid SIM cards)
+* Use a .lock file to prevent process_sms.py script from running twice (if run takes longer than configured crontab interval)
+* Configurable timer function for switching relays on/off
 
 
 How to install a python module
