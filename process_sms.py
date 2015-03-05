@@ -44,6 +44,8 @@ class TemperatureController(object):
         self.config['blacklistSenders'] = config_parser.get('SmsProcessing', 'blacklist_senders')
         self.config['systemDatetimeMaxDiffNoUpdateSeconds'] = config_parser.getint('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
 
+        self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
+
         self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
 
@@ -174,7 +176,8 @@ class TemperatureController(object):
         
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
             requested_state = ''
-            powerswitcher = PowerSwitcher()
+            gpio_channels = [int(channel) for channel in self.config['relayGpioChannels'].split(',')]
+            powerswitcher = PowerSwitcher(gpio_channels=gpio_channels)
             power_status_before = powerswitcher.get_status_string()
             if sender_message_raw.lower().startswith('power on'):
                 requested_state = 'ON'

@@ -19,16 +19,17 @@ log_ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 print "{0} -------------------REBOOT-----------------------".format(log_ts)
 
-powerswitcher = PowerSwitcher()
+config = ConfigParser.SafeConfigParser()
+config.read('/home/pi/sms-temperature-control/my.cfg')
+
+channel_list = config.get('PowerSwitching', 'relay_gpio_channels')
+gpio_channels = [int(channel) for channel in channel_list.split(',')]
+powerswitcher = PowerSwitcher(gpio_channels=gpio_channels)
 power_status = powerswitcher.get_status_string()
 
 print "{0} Successfully initialized pins after (re-)boot, power is now {1} ...".format(log_ts, power_status)
 
-config = ConfigParser.SafeConfigParser()
-config.read('/home/pi/sms-temperature-control/my.cfg')
-
 modem_identifier = config.get('Phone', 'modem_identifier')
-
 
 lsusb_output = subprocess.check_output("lsusb", bufsize=-1, stderr=subprocess.STDOUT)
 if modem_identifier and (modem_identifier in lsusb_output):

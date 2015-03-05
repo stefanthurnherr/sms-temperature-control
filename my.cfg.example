@@ -43,3 +43,6 @@ blacklist_senders=
 # without updating system datetime. Set to 0 (zero) to disable.
 system_datetime_max_diff_no_update_seconds=300
 
+[PowerSwitching]
+# The GPIO IDs that have relays connected (comma-separated list).
+relay_gpio_channels=22,23
