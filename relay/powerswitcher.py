@@ -8,15 +8,17 @@ import RPi.GPIO as GPIO
 # GPIO.BCM: use GPIO numbering
 # GPIO.BOARD: use board numbering
 GPIO_MODE = GPIO.BCM
-CHANNEL_BCM_ID = 22
+DEFAULT_CHANNEL_BCM_ID = 22
 
 class PowerSwitcher(object):
-    def __init__(self, gpio_ids=[CHANNEL_BCM_ID], warnings=False):
-        self.gpio_ids = gpio_ids
+    def __init__(self, gpio_channels=[DEFAULT_CHANNEL_BCM_ID], warnings=False):
+        self.gpio_channels = gpio_channels
         
         GPIO.setmode(GPIO_MODE)
         GPIO.setwarnings(warnings)
-        GPIO.setup(CHANNEL_BCM_ID, GPIO.OUT)
+       
+        for channel_id in gpio_channels: 
+            GPIO.setup(channel_id, GPIO.OUT)
         
         self.set_status_off()
 
@@ -40,21 +42,23 @@ class PowerSwitcher(object):
 
 
     def tear_down(self):
-        GPIO.cleanup(CHANNEL_BCM_ID)
+        for channel_id in self.gpio_channels:
+            GPIO.cleanup(channel_id)
 
 
     def __get_status(self):
-        return GPIO.input(CHANNEL_BCM_ID)
+        return GPIO.input(self.gpio_channels[0])
 
 
     def __set_channel_value_to(self, gpioValue):
-        GPIO.output(CHANNEL_BCM_ID, gpioValue)
+        for channel_id in self.gpio_channels:
+            GPIO.output(channel_id, gpioValue)
         return self.__get_status()
 
 
 if __name__ == "__main__":
 
-    ps = PowerSwitcher(warnings=True)
+    ps = PowerSwitcher(warnings=True, gpio_channels=[22,23])
 
     print "initial value is {0}".format(ps.get_status_string())
 
