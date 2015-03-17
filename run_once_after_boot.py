@@ -34,7 +34,7 @@ modem_identifier = config.get('Phone', 'modem_identifier')
 lsusb_output = subprocess.check_output("lsusb", bufsize=-1, stderr=subprocess.STDOUT)
 if modem_identifier and (modem_identifier in lsusb_output):
     print "{0} Modem with identifier {1} loaded correctly according to lsusb.".format(log_ts, modem_identifier)
-else:
+elif modem_identifier:
     # run usb_modeswitch to ensure 3G modem is in modem state (and not in storage mode)
     print "{0} Modem with identifier {1} not found in lsusb output, running usb_modeswitch after 30secs sleep ...".format(log_ts, modem_identifier) 
     time.sleep(30) # wait until modem is connected
@@ -47,6 +47,8 @@ else:
     if int(return_code) == 0:
         print "{0} sleeping for 60secs before continuing ...".format(log_ts)
 	time.sleep(60) # sleep a while after disconnect to give modem time to (re-)connect
+else:
+    print "{0} No modem_identifier specified, skipping usb_modeswitch enforcement.".format(log_ts)
 
 sys.stdout.flush()
 
