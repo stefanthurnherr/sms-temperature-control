@@ -2,6 +2,6 @@ DefaultVendor=0x12d1
 DefaultProduct=0x1446
 
 TargetVendor=0x12d1
-TargetProductList="14ac"
+TargetProductList=0x14ac
 
 MessageContent="55534243123456780000000000000011060000000000000000000000000000"
