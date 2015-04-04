@@ -25,8 +25,8 @@ Initial software setup
     # uninstall some useless/non-required packages
     > sudo apt-get remove --purge wolfram-engine
     > sudo apt-get autoremove -y x11-common omxplayer scratch dillo xpdf
-    > sudo apt-get autoremove -y x11-common galculator netsurf-common netsurf-gtk
-    > sudo apt-get autoremove -y lxde-common lxde-icon-theme lxdeterminal hicolor-icon-theme 
+    > sudo apt-get autoremove -y galculator netsurf-common netsurf-gtk
+    > sudo apt-get autoremove -y lxde-common lxde-icon-theme lxterminal hicolor-icon-theme 
     > sudo apt-get autoremove -y
     > sudo apt-get clean   
  
