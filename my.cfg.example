@@ -17,10 +17,10 @@ ussd_balance_inquiry=
 #Set the interval (in days) to fetch current balance using configured USSD code
 # If set to zero, balance will only be fetched when requested via sms.
 ussd_balance_auto_fetch_interval_days=0
+#
 #Optionally specify a regex to filter the USSD reply. Use a group to filter
 # the regex match.
 ussd_balance_reply_line_regex=
-
 #
 #Modem identifier specified as follows: vendorId:productId
 # most 3G usb modems are USB 'flip-flop' devices, e.g. they have an
