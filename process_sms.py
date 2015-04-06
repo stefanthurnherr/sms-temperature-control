@@ -255,7 +255,8 @@ class TemperatureController(object):
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
             reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
-                f.write(reply_raw)
+                if reply_raw is not None:
+                    f.write(reply_raw)
             print '{0} done.'.format(self.log_ts)
 
 
