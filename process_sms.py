@@ -130,12 +130,12 @@ class TemperatureController(object):
         # set system datetime to sent/received DateTime from received sms if delta is big enough
         if self.config['systemDatetimeMaxDiffNoUpdateSeconds'] > 0:
             system_datetime = datetime.now()
-            sms_datetime = sms[0]['DateTime']
-            delta_datetime = sms_datetime - system_datetime
+            sms_datetime_naive = sms[0]['DateTime']
+            delta_datetime = sms_datetime_naive - system_datetime
             delta_seconds = delta_datetime.total_seconds()
             if abs(delta_seconds) > self.config['systemDatetimeMaxDiffNoUpdateSeconds']:
                 # example unix date: Thu Nov 28 23:29:53 CET 2014
-                sms_datetime_unix = sms_datetime.strftime("%a %b %d %H:%M:%S CET %Y")
+                sms_datetime_unix = sms_datetime_naive.strftime("%a %b %d %H:%M:%S %Y")
                 set_date_cmd = "date -s \"{0}\" > /dev/null".format(sms_datetime_unix)
                 print "{0} Updating system datetime (delta: {1} seconds) using cmd: {2}".format(self.log_ts, delta_seconds, set_date_cmd)
                 os.system(set_date_cmd)
@@ -225,7 +225,7 @@ class TemperatureController(object):
 
         else:
             print "  not recognized, answering with help message."
-            response_message = u"Hi! 'temp' to get current temperature, 'power' (+' on'/' off') to get/change power status. Other commands: 'systeminfo', 'checkbalance'."
+            response_message = u"Hi! 'temp' to get current temperature, 'power' (+' on'/' off') to get (change) power status. Other commands: 'systeminfo', 'checkbalance'."
         
         time_before_send = time.time()
         try:
