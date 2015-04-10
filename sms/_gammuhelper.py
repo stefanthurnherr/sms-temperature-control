@@ -23,5 +23,5 @@ def get_signal_strength_percentage(gammu_state_machine):
 
 
 if __name__ == "__main__":
-    print "Helper class, not intended to be called directly."
+    print("Helper class, not intended to be called directly.")
     

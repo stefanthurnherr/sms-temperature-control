@@ -55,12 +55,12 @@ if __name__ == "__main__":
         del sys.argv[1]
 
     if not phone_number:
-        print "Valid receiver phone number must be specified as the first argument - bye!" 
+        print("Valid receiver phone number must be specified as the first argument - bye!")
         sys.exit() 
 
-    print "Sending following message as SMS to {0}".format(phone_number)
-    print " {0}".format(hello_text)
+    print("Sending following message as SMS to {0}".format(phone_number))
+    print(" {0}".format(hello_text))
 
     sms_sender = SmsSender('/home/pi/.gammurc', 1)
     sms_sender.send_sms(hello_text, phone_number)
-    print "Successfully sent sms - bye!"
+    print("Successfully sent sms - bye!")

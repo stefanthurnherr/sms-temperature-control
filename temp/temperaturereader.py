@@ -10,7 +10,7 @@ def __get_device_file():
     base_dir = '/sys/bus/w1/devices/'
     deviceFolders = glob.glob(base_dir + '28*')
     if len(deviceFolders) == 0:
-        print "no 28* device folder found under {0}, bye.".format(base_dir)
+        print("no 28* device folder found under {0}, bye.".format(base_dir))
         return None
  
     return deviceFolders[0] + '/w1_slave'
@@ -43,4 +43,4 @@ def read_celsius():
 
 
 if __name__ == "__main__":
-    print read_celsius()
+    print(read_celsius())

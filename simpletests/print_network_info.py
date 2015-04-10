@@ -19,10 +19,10 @@ netinfo = sm.GetNetworkInfo()
 
 # Print information
 
-print 'Network arrak: %s' % netinfo
-print 'Network name: %s' % netinfo['NetworkName']
-print 'Network code: %s' % netinfo['NetworkCode']
-print 'LAC: %s' % netinfo['LAC']
-print 'CID: %s' % netinfo['CID']
+print('Network array: %s' % netinfo)
+print('Network name: %s' % netinfo['NetworkName'])
+print('Network code: %s' % netinfo['NetworkCode'])
+print('LAC: %s' % netinfo['LAC'])
+print('CID: %s' % netinfo['CID'])
 
-print 'Bye!'
+print('Bye!')

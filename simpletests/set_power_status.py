@@ -18,4 +18,4 @@ new_power_status_string = powerswitcher.get_status_string()
 
 #powerswitcher.tearDown()
 
-print "toggled power status from {0} to {1}".format(old_power_status_string, new_power_status_string)
+print("toggled power status from {0} to {1}".format(old_power_status_string, new_power_status_string))

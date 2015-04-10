@@ -60,18 +60,18 @@ if __name__ == "__main__":
 
     ps = PowerSwitcher(warnings=True, gpio_channels=[22,23])
 
-    print "initial value is {0}".format(ps.get_status_string())
+    print("initial value is {0}".format(ps.get_status_string()))
 
     intervalSeconds = 5
     iteration = 1
     max_iteration = 3
     while iteration <= max_iteration:
-        print "iteration {0}/{1}".format(iteration, max_iteration)
+        print("iteration {0}/{1}".format(iteration, max_iteration))
         ps.set_status_on()
-        print "  set to on - value now is {0}".format(ps.get_status_string())
+        print("  set to on - value now is {0}".format(ps.get_status_string()))
         time.sleep(intervalSeconds)
         ps.set_status_off()
-        print "  set to off - value now is {0}".format(ps.get_status_string())
+        print("  set to off - value now is {0}".format(ps.get_status_string()))
         time.sleep(intervalSeconds)
         iteration = iteration + 1
 

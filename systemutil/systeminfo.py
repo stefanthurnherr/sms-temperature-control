@@ -51,7 +51,7 @@ def __extract_inet_string(interfaceName):
 
 def get_git_revision():
     with open(os.devnull, "w") as fnull:
-	scriptDirectory = os.path.dirname(os.path.abspath(__file__))
+        scriptDirectory = os.path.dirname(os.path.abspath(__file__))
         gitproc = Popen(['git', 'rev-parse', '--short', 'HEAD'], stdout = PIPE, stderr = fnull, cwd=scriptDirectory)
         (stdout, _) = gitproc.communicate()
         if stdout:    
@@ -68,11 +68,11 @@ def __get_cmd_stdout(cmd):
 
 
 if __name__ == "__main__":
-    print "System Info utility class with following capabilities:"
-    print "  kernel version    : {0}".format(get_kernel_version())
-    print "  inet address      : {0}".format(get_inet_address())
-    print "  git revision      : {0}".format(get_git_revision())
-    print "  RPi serial number : {0}".format(get_rpi_serial_number())
+    print("System Info utility class with following capabilities:")
+    print("  kernel version    : {0}".format(get_kernel_version()))
+    print("  inet address      : {0}".format(get_inet_address()))
+    print("  git revision      : {0}".format(get_git_revision()))
+    print("  RPi serial number : {0}".format(get_rpi_serial_number()))
 
-    print "Bye."
+    print("Bye.")
 

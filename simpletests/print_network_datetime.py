@@ -18,6 +18,6 @@ sm.Init()
 dateTimeInfo = sm.GetDateTime()
 
 # Print information
-print 'Current network date/time: %s' % dateTimeInfo
+print('Current network date/time: %s' % dateTimeInfo)
 
-print 'Bye!'
+print('Bye!')
