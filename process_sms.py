@@ -24,6 +24,7 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 class TemperatureController(object):
 
     (NO_SMS_FOUND, SMS_PROCESSED, SMS_IGNORED) = (0, 1, 2) 
+    DEBUG = False
 
     def __init__(self, config_parser):
         self.config = {}
@@ -48,6 +49,8 @@ class TemperatureController(object):
 
         self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
+        self.__debug_print('__init()__ done.')
+
 
     def run(self):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
@@ -56,8 +59,10 @@ class TemperatureController(object):
         sms_processing_error = True
         try:
             sms_processed_status = self.__process_next_sms()
+            self.__debug_print('__process_next_sms() done.')
             sms_processing_error = False
-            self.__update_balance_if_necessary()      
+            self.__update_balance_if_necessary()
+            self.__debug_print('__update_balance_if_necessary() done.')
  
         #except:
         #    print "error occurred while trying to process sms: ", sys.exc_info()[0] 
@@ -280,6 +285,11 @@ class TemperatureController(object):
                         return match.group(0)
  
         return None
+
+
+    def __debug_print(self, message):
+        if TemperatureController.DEBUG:
+            print "{0} DEBUG {1}".format(self.log_ts, message)
 
 
 # ------------------------------------------------------------------------------- #
