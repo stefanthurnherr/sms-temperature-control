@@ -121,21 +121,9 @@ Ideas to be implemented in the future
 
 How to install a python module
 ------------------------------
-The current Raspian distribution has all required python modules installed by default, so this shouldn't be necessary. But I've kept it here for future reference.
+For the reference, here's how to install an additional python module (like pytz or rpi.gpio if not already available):
 
-    # example description see this url:
-    # http://openmicros.org/index.php/articles/94-ciseco-product-documentation/raspberry-pi/217-getting-started-with-raspberry-pi-gpio-and-python#3
-
-    # install python-dev and python-pip (pip install gcc amongst others)
-    > sudo apt-get install python-dev python-pip
-
-    # download python sources for module, e.g.:
-    > wget https://pypi.python.org/packages/source/R/RPi.GPIO/RPi.GPIO-0.5.5.tar.gz
-
-    # untar sources
-
-    # enter the extracted module directory
-
-    # run this to install python module:
-    > sudo python setup.py install
-    # (alternative: sudo pip install rpi.gpio)
+    # install python-pip using the package manage
+    > sudo apt-get install python-pip
+    # then simply install the target module, e.g. pytz:
+    > sudo pip install pytz
