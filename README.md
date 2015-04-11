@@ -121,9 +121,12 @@ Ideas to be implemented in the future
 
 How to install a python module
 ------------------------------
-For the reference, here's how to install an additional python module (like pytz or rpi.gpio if not already available):
+For the reference, here's how to install an additional python module (like pytz or rpi.gpio or psutil if not already available):
 
-    # install python-pip using the package manage
+
+    # install python development headers required by some packages (e.g. psutil)
+    > sudo apt-get install python-dev
+    # install python-pip using the package manager
     > sudo apt-get install python-pip
     # then simply install the target module, e.g. pytz:
     > sudo pip install pytz
