@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import glob
 import time
 import sys
 import os
@@ -21,6 +22,11 @@ print("{0} -------------------REBOOT-----------------------".format(log_ts))
 
 config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
+
+work_dir = config.get('System', 'work_dir')
+for lock_file_path in glob.iglob(work_dir + '/.lock*'):
+    print("{0} removing old lockfile '{1}'.".format(log_ts, lock_file_path))
+    os.remove(lock_file_path)
 
 channel_list = config.get('PowerSwitching', 'relay_gpio_channels')
 gpio_channels = [int(channel) for channel in channel_list.split(',')]
@@ -66,7 +72,6 @@ print("{0} Sending confirmation sms to admin ({1})? {2}.".format(log_ts, admin_p
 if admin_notify_sms:
     gammu_config_file = config.get('Phone', 'gammu_config_file')
     gammu_config_section = config.get('Phone', 'gammu_config_section')
-    work_dir = config.get('System', 'work_dir')
    
     gammu_errors_count = '0' 
     errors_file = work_dir + '/GAMMU_ERRORS'

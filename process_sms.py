@@ -318,24 +318,29 @@ def test():
 
 
 if __name__ == '__main__':
-    config_parser = ConfigParser.SafeConfigParser()
-    config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
-    work_dir = config_parser.get('System', 'work_dir')
-    lockFilePath = work_dir + '/.lock_smsProcessing'
-    lock_acquired = False
-    try:
-        lock_acquired = lockfile.try_acquire_lock(lockFilePath)
+    uptime_threshold = 5*60
+    uptime = systeminfo.get_uptime_seconds()
+    if uptime > uptime_threshold: # otherwise allow reboot script to run completely to clean up etc.
 
-        if lock_acquired:
-            temperature_controller = TemperatureController(config_parser)
-            temperature_controller.run()
+        config_parser = ConfigParser.SafeConfigParser()
+        config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
-        else: 
-            print("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
+        work_dir = config_parser.get('System', 'work_dir')
+        lockFilePath = work_dir + '/.lock_smsProcessing'
+        lock_acquired = False
+        try:
+            lock_acquired = lockfile.try_acquire_lock(lockFilePath)
 
-    finally:
-        if lock_acquired:
-            lockfile.try_release_lock(lockFilePath)
+            if lock_acquired:
+                temperature_controller = TemperatureController(config_parser)
+                temperature_controller.run()
+            else: 
+                print("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
 
+        finally:
+            if lock_acquired:
+                lockfile.try_release_lock(lockFilePath)
 
+    else:
+        print("Uptime ({0} seconds) is less than {1} seconds, skipping sms processing.".format(uptime, uptime_threshold))

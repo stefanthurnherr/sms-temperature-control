@@ -10,6 +10,11 @@ def get_last_reboot_date_time():
     return who_out[date_time_index:].strip()
 
 
+def get_uptime_seconds():
+    with open('/proc/uptime', 'r') as f:
+        return int(float(f.readline().split()[0]))
+
+
 def get_kernel_version():
     return __get_cmd_stdout(['uname', '-r']).strip()
 
