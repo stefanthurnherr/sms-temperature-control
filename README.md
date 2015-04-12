@@ -28,6 +28,7 @@ Initial software setup
     > sudo apt-get autoremove -y galculator netsurf-common netsurf-gtk
     > sudo apt-get autoremove -y lxde-common lxde-icon-theme lxterminal hicolor-icon-theme 
     > sudo apt-get autoremove -y
+    # finally clear the apt cache from all downloaded .deb packages
     > sudo apt-get clean   
  
     # update RPi to latest and greatest
