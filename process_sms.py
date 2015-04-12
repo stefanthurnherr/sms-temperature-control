@@ -5,6 +5,7 @@ import sys
 import re
 from datetime import datetime,timedelta
 import time
+import psutil
 import os
 import subprocess
 import ConfigParser
@@ -15,7 +16,7 @@ from sms import SmsFetcher
 from sms import SmsSender
 from sms import UssdFetcher
 from relay import PowerSwitcher
-from systemutil import systeminfo
+from systemutil import systeminfo,lockfile
 
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -24,7 +25,7 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 class TemperatureController(object):
 
     (NO_SMS_FOUND, SMS_PROCESSED, SMS_IGNORED) = (0, 1, 2) 
-    DEBUG = True
+    DEBUG = False
 
     def __init__(self, config_parser):
         self.config = {}
@@ -49,7 +50,7 @@ class TemperatureController(object):
 
         self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
 
-        self.__debug_print('__init()__ done.')
+        self.__debug_print('__init()__ done.', True)
 
 
     def run(self):
@@ -287,9 +288,20 @@ class TemperatureController(object):
         return None
 
 
-    def __debug_print(self, message):
+    def __debug_print(self, message, mem_info=False):
         if TemperatureController.DEBUG:
-            print("{0} DEBUG {1}".format(self.log_ts, message))
+            debug_minutes = ['05', '15', '25', '35', '45', '55']
+            if any(':'+minute+':' in self.log_ts for minute in debug_minutes):
+                print("{0} DEBUG {1}".format(self.log_ts, message))
+                if mem_info: 
+                    vmem = psutil.virtual_memory()
+                    print("        vmem % free : {:>15,}%".format(vmem.percent))
+                    print("        vmem avail  : {:>15,}".format(vmem.available))
+                    print("        vmem total  : {:>15,}".format(vmem.total))
+                    swap = psutil.swap_memory()
+                    print("        swap free   : {:>15,}".format(swap.free))
+                    print("        swap total  : {:>15,}".format(swap.total))
+
 
 
 # ------------------------------------------------------------------------------- #
@@ -309,5 +321,21 @@ if __name__ == '__main__':
     config_parser = ConfigParser.SafeConfigParser()
     config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
-    temperature_controller = TemperatureController(config_parser)
-    temperature_controller.run()
+    work_dir = config_parser.get('System', 'work_dir')
+    lockFilePath = work_dir + '/.lock_smsProcessing'
+    lock_acquired = False
+    try:
+        lock_acquired = lockfile.try_acquire_lock(lockFilePath)
+
+        if lock_acquired:
+            temperature_controller = TemperatureController(config_parser)
+            temperature_controller.run()
+
+        else: 
+            print("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
+
+    finally:
+        if lock_acquired:
+            lockfile.try_release_lock(lockFilePath)
+
+
