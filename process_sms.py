@@ -5,7 +5,6 @@ import sys
 import re
 from datetime import datetime,timedelta
 import time
-import psutil
 import os
 import subprocess
 import ConfigParser
@@ -25,7 +24,6 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 class TemperatureController(object):
 
     (NO_SMS_FOUND, SMS_PROCESSED, SMS_IGNORED) = (0, 1, 2) 
-    DEBUG = False
 
     def __init__(self, config_parser):
         self.config = {}
@@ -48,10 +46,6 @@ class TemperatureController(object):
 
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
 
-        self.log_ts = datetime.now().strftime(DATETIME_FORMAT)
-
-        self.__debug_print('__init()__ done.', True)
-
 
     def run(self):
         errors_file = self.config['workDir'] + '/GAMMU_ERRORS'
@@ -60,13 +54,11 @@ class TemperatureController(object):
         sms_processing_error = True
         try:
             sms_processed_status = self.__process_next_sms()
-            self.__debug_print('__process_next_sms() done.')
             sms_processing_error = False
             self.__update_balance_if_necessary()
-            self.__debug_print('__update_balance_if_necessary() done.')
  
         #except:
-        #    print("error occurred while trying to process sms: ", sys.exc_info()[0])
+        #    debug("error occurred while trying to process sms: " + sys.exc_info()[0])
         
         finally:
             if sms_processing_error:
@@ -89,13 +81,13 @@ class TemperatureController(object):
                 
                 schedule_reboot = new_error_count >= current_reboot_threshold 
                 next_reboot_threshold = 2 * current_reboot_threshold
-                print("{0} caught error number {1} while trying to process next sms, scheduling reboot? {2}.".format(self.log_ts, new_error_count, schedule_reboot))
+                debug("caught error number {} while trying to process next sms, scheduling reboot? {}.".format(new_error_count, schedule_reboot))
                 
                 if schedule_reboot:
                     with open(errors_threshold_file, 'w') as f:
                         self.__write_int_to_file(f, next_reboot_threshold) 
                     return_code = subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
-                    print("{0} reboot scheduled (return code:{1}), next gammu error threshold is {2} ...".format(self.log_ts, return_code, next_reboot_threshold))
+                    debug("reboot scheduled (return code:{}), next gammu error threshold is {} ...".format(return_code, next_reboot_threshold))
 
             else:
                 os.remove(errors_file) if os.path.isfile(errors_file) else None
@@ -119,17 +111,17 @@ class TemperatureController(object):
             sms_messages = sms_fetcher.delete_get_next_sms()
         except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
             timeout_after_time = time.time() - time_before_fetch
-            print("{0} Got exception after {1} seconds while trying to fetch/delete next sms (signalStrength: {2}%).".format(self.log_ts, timeout_after_time, signal_strength_percentage))
+            debug("Got exception after {} seconds while trying to fetch/delete next sms (signalStrength: {}%).".format(timeout_after_time, signal_strength_percentage))
             raise # re-raise exception so we get the stacktrace to stderr
         
         absolute_script_path = os.path.abspath(__file__)
         
         if not sms_messages:
             # would write a log message every minute even if no sms found 
-            #print("{0} No sms found by {1} - bye.".format(self.log_ts, absolute_script_path))
+            #debug("No sms found by {} - bye.".format(absolute_script_path))
             return TemperatureController.NO_SMS_FOUND
         
-        print("{0} Start sms processing by {1}".format(self.log_ts, absolute_script_path))
+        debug("Start sms processing by {}".format(absolute_script_path))
         
         sms = sms_messages[0]
         
@@ -143,29 +135,29 @@ class TemperatureController(object):
                 # example unix date: Thu Nov 28 23:29:53 CET 2014
                 sms_datetime_unix = sms_datetime_naive.strftime("%a %b %d %H:%M:%S %Y")
                 set_date_cmd = "date -s \"{0}\" > /dev/null".format(sms_datetime_unix)
-                print("{0} Updating system datetime (delta: {1} seconds) using cmd: {2}".format(self.log_ts, delta_seconds, set_date_cmd))
+                debug("Updating system datetime (delta: {} seconds) using cmd: {}".format(delta_seconds, set_date_cmd))
                 os.system(set_date_cmd)
             #else:
-        	#print("{0} system date diff ({1} seconds) is not greater than configured delta ({2} seconds), skipping updating.".format(self.log_ts, delta_seconds, self.config['systemDatetimeMaxDiffNoUpdateSeconds']))
+        	#debug("system date diff ({} seconds) is not greater than configured delta ({} seconds), skipping updating.".format(delta_seconds, self.config['systemDatetimeMaxDiffNoUpdateSeconds']))
         
         now_string = datetime.now().strftime(DATETIME_FORMAT)
         
         sender_number = sms[0]['Number']
         sender_message_raw = sms[0]['Text']
         sender_message = repr(sender_message_raw)
-        print("  got sms message from {0}: {1}".format(sender_number, sender_message))
+        debug("  got sms message from {}: {}".format(sender_number, sender_message))
         
         if self.config['myNumber'] in sender_number:
-            print("  got sms from my own number - not responding in order to prevent infinite loop. Bye!")
+            debug("  got sms from my own number - not responding in order to prevent infinite loop. Bye!")
             return TemperatureController.SMS_IGNORED
         elif self.config['blacklistSenders']: # empty strings are false in python
            for blacklist_sender in self.config['blacklistSenders'].split(","): 
                 if len(blacklist_sender) > 0 and blacklist_sender in sender_number: 
-                    print("  this sender is in blacklist (matched '{0}') - ignoring. Bye!".format(blacklist_sender))
+                    debug("  this sender is in blacklist (matched '{}') - ignoring. Bye!".format(blacklist_sender))
                     return TemperatureController.SMS_IGNORED
         
         if len(sms_messages) > 1:
-            print("  found sms consisting of {0} parts - only the first part will be considered.".format(len(sms_messages)))
+            debug("  found sms consisting of {} parts - only the first part will be considered.".format(len(sms_messages)))
         
         
         response_message = None
@@ -174,10 +166,10 @@ class TemperatureController(object):
             temp_raw = temperaturereader.read_celsius()
             if temp_raw: 
                 temp = round(temp_raw, 1)
-                print("  responding with temperature: {0} Celsius.".format(temp))
+                debug("  responding with temperature: {} Celsius.".format(temp))
                 response_message = u'Hi! Current temperature here is {0} Celsius ({1}).'.format(temp, now_string)
             else:
-                print("  temperature could not be read.")
+                debug("  temperature could not be read.")
                 response_message = u'Hi! Temperature sensor is offline, check log files.'
         
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
@@ -188,36 +180,36 @@ class TemperatureController(object):
             if sender_message_raw.lower().startswith('power on'):
                 requested_state = 'ON'
                 powerswitcher.set_status_on()
-                print("  power has been set ON")
+                debug("  power has been set ON")
             elif sender_message_raw.lower().startswith('power off'):
                 requested_state = 'OFF'
                 powerswitcher.set_status_off()
-                print("  power has been set OFF")
+                debug("  power has been set OFF")
         
             power_status = powerswitcher.get_status_string()
             
-            print("  responding with power status: {0} (was: {1}).".format(power_status, power_status_before))
+            debug("  responding with power status: {} (was: {}).".format(power_status, power_status_before))
             if requested_state:
                 response_message = u'Hi! Power has been switched {0}, was {1} ({2}).'.format(power_status, power_status_before, now_string)
             else:
                 response_message = u'Hi! Power is currently {0} ({1}).'.format(power_status, now_string)
         
         elif sender_message_raw and sender_message_raw.lower().startswith('systeminfo'):
-            print("  responding with system info:")
+            debug("  responding with system info:")
             up_since = systeminfo.get_last_reboot_date_time()
             kernelVersion = systeminfo.get_kernel_version()
             rpiSerialNumber = systeminfo.get_rpi_serial_number()
             localInetAddress = systeminfo.get_inet_address()
             gitRevision = systeminfo.get_git_revision()
             balance_info = self.__get_cached_balance_info(short=True)
-            print("    system datetime  : {0}".format(now_string))
-            print("    up since         : {0}".format(up_since))
-            print("    kernel version   : {0}".format(kernelVersion))
-            print("    RPi serial       : {0}".format(rpiSerialNumber))
-            print("    inet address     : {0}".format(localInetAddress))
-            print("    git revision     : {0}".format(gitRevision))
-            print("    Signal strength  : {0}%".format(signal_strength_percentage))
-            print("    Balance          : {0}".format(balance_info))
+            debug("    system datetime  : {}".format(now_string))
+            debug("    up since         : {}".format(up_since))
+            debug("    kernel version   : {}".format(kernelVersion))
+            debug("    RPi serial       : {}".format(rpiSerialNumber))
+            debug("    inet address     : {}".format(localInetAddress))
+            debug("    git revision     : {}".format(gitRevision))
+            debug("    Signal strength  : {}%".format(signal_strength_percentage))
+            debug("    Balance          : {}".format(balance_info))
             response_message = u'Hi!\n sysTime: {0}\n uptime: {1}\n kernel: {2}\n serial: {3}\n inet: {4}\n gitRev: {5}\n signal: {6}%\n $$: {7}.'.format(now_string, up_since, kernelVersion, rpiSerialNumber, localInetAddress, gitRevision, signal_strength_percentage, balance_info)
         
         
@@ -225,12 +217,12 @@ class TemperatureController(object):
             ussd = self.config['ussdCheckBalance']
             self.__update_balance_if_necessary(force=True)
             balance_info = self.__get_cached_balance_info()
-            print("  responding with USSD reply for {0}:".format(ussd))
-            print('  ' + balance_info.encode('ascii', 'replace'))
+            debug("  responding with USSD reply for {}:".format(ussd))
+            debug("  " + balance_info.encode('ascii', 'replace'))
             response_message = u'Hi! Current balance info:\n{0}'.format(balance_info)
 
         else:
-            print("  not recognized, answering with help message.")
+            debug("  not recognized, answering with help message.")
             response_message = u"Hi! 'temp' to get current temperature, 'power' (+' on'/' off') to get (change) power status. Other commands: 'systeminfo', 'checkbalance'."
         
         time_before_send = time.time()
@@ -240,7 +232,7 @@ class TemperatureController(object):
             return TemperatureController.SMS_PROCESSED
         except (gammu.ERR_UNKNOWN):
             timeout_after_time = time.time() - time_before_send
-            print("{0} Got exception after {1} seconds while trying to send sms.".format(self.log_ts, timeout_after_time))
+            debug("Got exception after {} seconds while trying to send sms.".format(timeout_after_time))
             raise # re-raise exception so we get the stacktrace to stderr
 
 
@@ -257,13 +249,13 @@ class TemperatureController(object):
                 os.remove(balance_file)
 
         if can_do_check and do_check:
-            print('{0} Updating cached balance (force={1}) using USSD code \'{2}\' ...'.format(self.log_ts, force, ussd))
+            debug("Updating cached balance (force={}) using USSD code '{}' ...".format(force, ussd))
             ussd_fetcher = UssdFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'])
             reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
             with open(balance_file, 'w') as f:
                 if reply_raw is not None:
                     f.write(reply_raw)
-            print('{0} done.'.format(self.log_ts))
+            debug("done.")
 
 
     def __get_cached_balance_info(self, short=False):
@@ -288,29 +280,17 @@ class TemperatureController(object):
         return None
 
 
-    def __debug_print(self, message, mem_info=False):
-        if TemperatureController.DEBUG:
-            debug_minutes = ['05', '15', '25', '35', '45', '55']
-            if any(':'+minute+':' in self.log_ts for minute in debug_minutes):
-                print("{0} DEBUG {1}".format(self.log_ts, message))
-                if mem_info: 
-                    vmem = psutil.virtual_memory()
-                    print("        vmem % free : {:>15,}%".format(vmem.percent))
-                    print("        vmem avail  : {:>15,}".format(vmem.available))
-                    print("        vmem total  : {:>15,}".format(vmem.total))
-                    swap = psutil.swap_memory()
-                    print("        swap free   : {:>15,}".format(swap.free))
-                    print("        swap total  : {:>15,}".format(swap.total))
-
-
-
 # ------------------------------------------------------------------------------- #
+
+def debug(message):
+    print("{:>9}  {}".format(os.getpid(), message))
+  
 
 # How to run this method from command-line:
 #  python -c 'from process_sms import test; test()'
 #
 def test():
-    print("welcome to test()")
+    debug("welcome to test()")
     config_parser = ConfigParser.SafeConfigParser()
     config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
@@ -336,11 +316,11 @@ if __name__ == '__main__':
                 temperature_controller = TemperatureController(config_parser)
                 temperature_controller.run()
             else: 
-                print("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
+                debug("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
 
         finally:
             if lock_acquired:
                 lockfile.try_release_lock(lockFilePath)
 
     else:
-        print("Uptime ({0} seconds) is less than {1} seconds, skipping sms processing.".format(uptime, uptime_threshold))
+        debug("Uptime ({0} seconds) is less than {1} seconds, skipping sms processing.".format(uptime, uptime_threshold))
