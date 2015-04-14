@@ -313,9 +313,10 @@ if __name__ == '__main__':
         if len(pgrep_pids) < 1:
             debug("pgrep pattern wrong, my own script process not found: {}".format(pgrep_pattern))
         elif len(pgrep_pids) == 1 and pgrep_pids[0] == os.getpid():
-            debug("no other pid found for this script, going ahead with sms processing...")
+            debug("START no other pid found for this script, going ahead with sms processing...")
             temperature_controller = TemperatureController(config_parser)
             temperature_controller.run()
+            debug("DONE sms processing.")
         else:
             debug("Found other processes already running this script (PIDs: {}), skipping this script run.".format(pgrep_pids))
 
