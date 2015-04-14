@@ -15,7 +15,7 @@ from sms import SmsFetcher
 from sms import SmsSender
 from sms import UssdFetcher
 from relay import PowerSwitcher
-from systemutil import systeminfo,lockfile
+from systemutil import systeminfo
 
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -284,6 +284,7 @@ class TemperatureController(object):
 
 def debug(message):
     print("{:>9}  {}".format(os.getpid(), message))
+    sys.stdout.flush()
   
 
 # How to run this method from command-line:
@@ -306,21 +307,17 @@ if __name__ == '__main__':
         config_parser = ConfigParser.SafeConfigParser()
         config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
-        work_dir = config_parser.get('System', 'work_dir')
-        lockFilePath = work_dir + '/.lock_smsProcessing'
-        lock_acquired = False
-        try:
-            lock_acquired = lockfile.try_acquire_lock(lockFilePath)
+        pgrep_pattern = 'python .*' + os.path.basename(__file__) + '\\\''
+        pgrep_pids = systeminfo.get_pgrep_pids(pgrep_pattern)
 
-            if lock_acquired:
-                temperature_controller = TemperatureController(config_parser)
-                temperature_controller.run()
-            else: 
-                debug("Could not acquire lock '{0}', previous run probably still running.".format(lockFilePath))
-
-        finally:
-            if lock_acquired:
-                lockfile.try_release_lock(lockFilePath)
+        if len(pgrep_pids) < 1:
+            debug("pgrep pattern wrong, my own script process not found: {}".format(pgrep_pattern))
+        elif len(pgrep_pids) == 1 and pgrep_pids[0] == os.getpid():
+            debug("no other pid found for this script, going ahead with sms processing...")
+            temperature_controller = TemperatureController(config_parser)
+            temperature_controller.run()
+        else:
+            debug("Found other processes already running this script (PIDs: {}), skipping this script run.".format(pgrep_pids))
 
     else:
         debug("Uptime ({0} seconds) is less than {1} seconds, skipping sms processing.".format(uptime, uptime_threshold))

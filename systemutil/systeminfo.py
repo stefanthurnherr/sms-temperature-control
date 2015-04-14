@@ -15,6 +15,11 @@ def get_uptime_seconds():
         return int(float(f.readline().split()[0]))
 
 
+def get_pgrep_pids(pattern):
+    stdout = __get_cmd_stdout(['pgrep', '-f', pattern]).strip()
+    return [int(pid) for pid in stdout.splitlines()]
+
+
 def get_kernel_version():
     return __get_cmd_stdout(['uname', '-r']).strip()
 
@@ -78,6 +83,9 @@ if __name__ == "__main__":
     print("  inet address      : {0}".format(get_inet_address()))
     print("  git revision      : {0}".format(get_git_revision()))
     print("  RPi serial number : {0}".format(get_rpi_serial_number()))
+
+    pgrep_pids = get_pgrep_pids("python .*" + os.path.basename(__file__) + "\\\'")
+    print("PIDs running this script: {}".format(pgrep_pids))
 
     print("Bye.")
 
