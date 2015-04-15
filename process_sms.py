@@ -121,7 +121,7 @@ class TemperatureController(object):
             #debug("No sms found by {} - bye.".format(absolute_script_path))
             return TemperatureController.NO_SMS_FOUND
         
-        debug("Start sms processing by {}".format(absolute_script_path))
+        debug("Start sms processing (found {} messages) by {}".format(len(sms_messages), absolute_script_path))
         
         sms = sms_messages[0]
         
@@ -313,7 +313,7 @@ if __name__ == '__main__':
         if len(pgrep_pids) < 1:
             debug("pgrep pattern wrong, my own script process not found: {}".format(pgrep_pattern))
         elif len(pgrep_pids) == 1 and pgrep_pids[0] == os.getpid():
-            debug("START no other pid found for this script, going ahead with sms processing...")
+            debug("START no other pid found for this script (PID: {}), going ahead with sms processing...".format(pgrep_pids))
             temperature_controller = TemperatureController(config_parser)
             temperature_controller.run()
             debug("DONE sms processing.")
