@@ -23,6 +23,7 @@ Initial hardware setup
 Initial software setup
 ----------------------
     # uninstall some useless/non-required packages
+    > sudo apt-get autoremove -y sonic-pi
     > sudo apt-get autoremove -y wolfram-engine
     > sudo apt-get autoremove -y x11-common omxplayer scratch dillo xpdf
     > sudo apt-get autoremove -y galculator netsurf-common netsurf-gtk
