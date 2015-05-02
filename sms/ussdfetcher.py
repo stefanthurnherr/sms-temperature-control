@@ -16,7 +16,9 @@ class UssdFetcher(object):
         config_section = self.gammu_config_section
         response = subprocess.check_output(['gammu', '-c', config_file, '-s', config_section, 'getussd', ussd])
         if u'Service reply' in response:
-            for line in response.splitlines():
+            for line_raw in response.splitlines():
+                #print("got service reply line:{}".format(line_raw))
+                line = line_raw.strip() #remove trailing newline if applicable
                 if line.startswith(u'Service reply'):
                     service_reply_raw = line[line.find('"')+1:-1]
                     return self.__remove_zero_padding_from_reply_raw(service_reply_raw)
@@ -45,12 +47,17 @@ class UssdFetcher(object):
 
 if __name__ == "__main__":
 
-    #ussd = '*111#'
-    ussd = '#121#'
+    #ussd = '*111#' # Comviq SE: check balance
+    #ussd = '*211#' # Comviq SE: check balance
+    #ussd = '*113#' # Comviq SE: check bonus
+    #ussd = '*137#' # Comviq SE: check bonus
+    #ussd = '*4000#' # Comviq SE: check bonus
+
+    #ussd = '#121#' # Orange CH: check balance
     print("Trying to call USSD code {0} ...".format(ussd))
 
     config_file = '/home/pi/.gammurc'
-    config_section = '2'
+    config_section = '1'
 
     ussd_fetcher = UssdFetcher(config_file, config_section)
     reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
