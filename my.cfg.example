@@ -28,7 +28,7 @@ ussd_balance_reply_line_regex=
 # modes, and it is important that you specify the productId of the modem mode here.
 # example for ZTE MF190: 19d2:2000 for storage mode, 19d2:0017 for modem mode
 # for Huawei E1820: 12d1:1446 for storage mode, 12d1:14ac for modem mode
-# for Huawei E220: nothing, USB modem is loaded correctly by default
+# for Huawei E220: nothing, USB modem is loaded correctly (12d1:1003) by default
 modem_identifier=
 
 [Administrator]
