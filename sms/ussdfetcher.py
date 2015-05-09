@@ -58,7 +58,9 @@ if __name__ == "__main__":
     print("Trying to call USSD code {0} ...".format(ussd))
 
     config_file = '/home/pi/.gammurc'
-    config_section = '0'
+    # 
+    #Huawei E220: use section 1 (0 and 2 dont work)
+    config_section = '1'
 
     ussd_fetcher = UssdFetcher(config_file, config_section)
     reply_raw = ussd_fetcher.fetch_ussd_reply_raw(ussd)
