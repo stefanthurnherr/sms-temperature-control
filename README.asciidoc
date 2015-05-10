@@ -1,10 +1,10 @@
 = Temperature Control via SMS
-:toc: right
+:toc:
 :toc-placement!:
 
-== Readme
-
 toc::[]
+
+== Readme
 
 === How to get started
 
