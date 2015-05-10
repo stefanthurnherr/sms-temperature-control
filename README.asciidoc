@@ -1,3 +1,8 @@
+= AsciiDoc Writer's Guide
+Doc Writer <doc.writer@asciidoctor.org>
+v1.0, 2014-08-01
+:toc: right
+
 How to get started
 ------------------
 
