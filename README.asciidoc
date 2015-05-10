@@ -1,6 +1,6 @@
 :toc:
 :toc-placement!:
-:toc-title: Contentis
+:toc-title: Readme Overview (ToC)
 
 toc::[]
 
