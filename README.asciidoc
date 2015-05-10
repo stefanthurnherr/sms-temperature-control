@@ -1,6 +1,7 @@
 = Temperature Control via SMS
 :toc:
 :toc-placement!:
+
 toc::[]
 
 == How to get started
