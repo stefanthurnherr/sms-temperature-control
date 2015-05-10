@@ -24,9 +24,6 @@ config = ConfigParser.SafeConfigParser()
 config.read('/home/pi/sms-temperature-control/my.cfg')
 
 work_dir = config.get('System', 'work_dir')
-for lock_file_path in glob.iglob(work_dir + '/.lock*'):
-    print("{0} removing old lockfile '{1}'.".format(log_ts, lock_file_path))
-    os.remove(lock_file_path)
 
 channel_list = config.get('PowerSwitching', 'relay_gpio_channels')
 gpio_channels = [int(channel) for channel in channel_list.split(',')]
