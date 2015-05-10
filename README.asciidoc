@@ -1,7 +1,8 @@
 = Temperature Control via SMS
 Stefan Thurnherr
 
-:toc: right
+:toc:
+:toc-placement: preamble
 :toclevels: 5
 
 == Readme
