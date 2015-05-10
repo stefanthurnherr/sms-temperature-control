@@ -1,12 +1,11 @@
 = Temperature Control via SMS
 :toc:
 :toc-placement!:
-:toc-levels: 4
 toc::[]
 
-=== How to get started
+== How to get started
 
-==== Required hardware
+=== Required hardware
 
 * Raspberry Pi with an SD card (I recommend 8GB) and running raspbian
 image
@@ -28,7 +27,7 @@ whole thing (I bought one http://www.angledcables.com/cables.html[here])
 * Power cable with male and female plug; cable will be cut in half to
 put the relay in between
 
-==== Initial hardware setup
+=== Initial hardware setup
 
 * Connect the temperature sensor to correct power/ground/data pins on
 the Pi using a 'pullup' resistor of 4K7 Ohm. See sensor specification
@@ -40,7 +39,7 @@ My temperature sensor has cable colors red=3V3, black=GND and 3rd cable
 * Connect the relay to the configured (in my.cfg) GPIO pins on the Pi -
 see your relay specification
 
-==== Initial software setup
+=== Initial software setup
 
 [source,shell]
 ----
@@ -111,7 +110,7 @@ usbserial
 #
 ----
 
-==== Some helpful commands when trying out gammu
+=== Some helpful commands when trying out gammu
 
 [source,shell]
 ----
@@ -131,13 +130,13 @@ usbserial
 > gammu -c ${HOME}/.gammurc.cfg getussd '*100#'
 ----
 
-=== Screenshots of one of my boxes
+== Screenshots of one of my boxes
 
 Assembled box without top cover:
 image:/screenshots/readme-openbox.jpg[ScreenShot] Final version of the
 box: image:/screenshots/readme-closedbox.jpg[ScreenShot]
 
-=== Ideas to be implemented in the future
+== Ideas to be implemented in the future
 
 * Warn administrator if balance falls below (configurable) threshold
 (for prepaid SIM cards)
@@ -145,7 +144,7 @@ box: image:/screenshots/readme-closedbox.jpg[ScreenShot]
 * Add support for remote-controlled relay (TellStick? z-wave?) to be able to 
 physically separate 5V circuit from 230V circuit. This would increase safety.
 
-=== How to install a python module
+== How to install a python module
 
 For the reference, here's how to install an additional python module
 (like pytz or rpi.gpio or psutil if not already available):
