@@ -29,8 +29,7 @@ whole thing (I bought one http://www.angledcables.com/cables.html[here])
 * Power cable with male and female plug; cable will be cut in half to
 put the relay in between
 
-Initial hardware setup
-~~~~~~~~~~~~~~~~~~~~~~
+==== Initial hardware setup
 
 * Connect the temperature sensor to correct power/ground/data pins on
 the Pi using a 'pullup' resistor of 4K7 Ohm. See sensor specification
