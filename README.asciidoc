@@ -4,8 +4,6 @@
 
 toc::[]
 
-== Readme
-
 === How to get started
 
 ==== Required hardware
