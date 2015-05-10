@@ -1,6 +1,6 @@
 :toc:
 :toc-placement!:
-:toclevels: 2
+:toc-title: Contentis
 
 toc::[]
 
