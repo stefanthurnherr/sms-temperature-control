@@ -116,7 +116,7 @@ usbserial
 
 Some helpful commands when trying out gammu
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+[source,shell]
 ----
 # waiting for PIN?
 > gammu getsecuritystatus
