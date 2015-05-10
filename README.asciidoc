@@ -1,4 +1,3 @@
-= Temperature Control via SMS
 :toc:
 :toc-placement!:
 
