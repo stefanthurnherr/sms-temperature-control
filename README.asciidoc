@@ -45,7 +45,7 @@ see your relay specification
 
 Initial software setup
 ~~~~~~~~~~~~~~~~~~~~~~
-
+[source,shell]
 ----
 # uninstall some useless/non-required packages
 > sudo apt-get autoremove -y sonic-pi python-minecraftpi wolfram-engine
