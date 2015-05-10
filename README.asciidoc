@@ -1,7 +1,8 @@
 = Temperature Control via SMS
 :toc:
 :toc-placement!:
-
+:toclevels: 4
+:toc-levels: 4
 toc::[]
 
 === How to get started
