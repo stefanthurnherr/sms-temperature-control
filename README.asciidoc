@@ -1,5 +1,7 @@
 :toc:
 :toc-placement!:
+:toclevels: 2
+:toc-levels: 2
 
 toc::[]
 
