@@ -4,10 +4,9 @@ v1.0, 2014-08-01
 :toc: right
 :toclevels: 5
 
-How to get started
-------------------
+=== How to get started
 
-=== Required hardware
+==== Required hardware
 
 * Raspberry Pi with an SD card (I recommend 8GB) and running raspbian
 image
@@ -41,8 +40,8 @@ My temperature sensor has cable colors red=3V3, black=GND and 3rd cable
 * Connect the relay to the configured (in my.cfg) GPIO pins on the Pi -
 see your relay specification
 
-Initial software setup
-~~~~~~~~~~~~~~~~~~~~~~
+==== Initial software setup
+
 [source,shell]
 ----
 # uninstall some useless/non-required packages
@@ -112,8 +111,8 @@ usbserial
 #
 ----
 
-Some helpful commands when trying out gammu
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==== Some helpful commands when trying out gammu
+
 [source,shell]
 ----
 # waiting for PIN?
@@ -132,15 +131,13 @@ Some helpful commands when trying out gammu
 > gammu -c ${HOME}/.gammurc.cfg getussd '*100#'
 ----
 
-Screenshots of one of my boxes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Screenshots of one of my boxes
 
 Assembled box without top cover:
 image:/screenshots/readme-openbox.jpg[ScreenShot] Final version of the
 box: image:/screenshots/readme-closedbox.jpg[ScreenShot]
 
-Ideas to be implemented in the future
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== Ideas to be implemented in the future
 
 * Warn administrator if balance falls below (configurable) threshold
 (for prepaid SIM cards)
@@ -148,11 +145,11 @@ Ideas to be implemented in the future
 * Add support for remote-controlled relay (TellStick? z-wave?) to be able to 
 physically separate 5V circuit from 230V circuit. This would increase safety.
 
-How to install a python module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=== How to install a python module
 
 For the reference, here's how to install an additional python module
 (like pytz or rpi.gpio or psutil if not already available):
+
 [source,shell]
 ----
 # install python development headers required by some packages (e.g. psutil)
