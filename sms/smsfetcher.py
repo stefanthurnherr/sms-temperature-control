@@ -8,8 +8,9 @@ import _gammuhelper
 
 
 class SmsFetcher(object):
-    def __init__(self, gammu_config_file, gammu_config_section):
+    def __init__(self, gammu_config_file, gammu_config_section, log_delete_sms_file_path):
         self.gammu_state_machine = _gammuhelper.get_init_state_machine(gammu_config_file, gammu_config_section)
+        self.log_delete_sms_file_path = log_delete_sms_file_path 
 
     def get_signal_strength_percentage(self):
         return _gammuhelper.get_signal_strength_percentage(self.gammu_state_machine)
@@ -40,7 +41,7 @@ class SmsFetcher(object):
 
             for i,deleteSms in enumerate(sms):
                 if delete_message:
-                    with open('/home/pi/sms-temperature-control/log/sms-delete.log', 'a') as sms_log_file:
+                    with open(self.log_delete_sms_file_path, 'a') as sms_log_file:
                         separator = '   '
                         now_text = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         received_timestamp = sms[0]['DateTime'].strftime("%Y-%m-%d %H:%M:%S")

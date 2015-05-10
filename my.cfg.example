@@ -1,5 +1,6 @@
 [System]
 work_dir=/home/pi/sms-temperature-control/work
+log_dir=/home/pi/sms-temperature-control/log
 
 [Phone]
 #Will be used to prevent SMS loops (accidentally sending SMS to itself). Matching

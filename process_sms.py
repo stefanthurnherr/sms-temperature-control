@@ -33,6 +33,12 @@ class TemperatureController(object):
         if not os.path.exists(work_dir):
             os.makedirs(work_dir)
         self.config['workDir'] = work_dir
+
+        log_dir_raw = config_parser.get('System', 'log_dir')
+        log_dir = os.path.abspath(log_dir_raw)
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+        self.config['logDir'] = log_dir
     
         self.config['myNumber'] = config_parser.get('Phone', 'number')
         self.config['gammuConfigFile'] = config_parser.get('Phone', 'gammu_config_file')
@@ -106,7 +112,7 @@ class TemperatureController(object):
         signal_strength_percentage = '--'
         time_before_fetch = time.time()
         try:
-            sms_fetcher = SmsFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection']) 
+            sms_fetcher = SmsFetcher(self.config['gammuConfigFile'], self.config['gammuConfigSection'], self.config['logDir'] + '/sms-delete.log') 
             signal_strength_percentage = sms_fetcher.get_signal_strength_percentage()
             sms_messages = sms_fetcher.delete_get_next_sms()
         except (gammu.ERR_TIMEOUT, gammu.ERR_DEVICENOTEXIST, gammu.ERR_NOTCONNECTED):
