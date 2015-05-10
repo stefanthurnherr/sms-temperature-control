@@ -46,7 +46,7 @@ see your relay specification
 Initial software setup
 ~~~~~~~~~~~~~~~~~~~~~~
 
-----------------------------------------------------------------------------------------------------------------------------------------------------
+----
 # uninstall some useless/non-required packages
 > sudo apt-get autoremove -y sonic-pi python-minecraftpi wolfram-engine
 > sudo apt-get autoremove -y x11-common omxplayer scratch dillo xpdf
@@ -112,12 +112,12 @@ usbserial
 # |  |  |  |  |
 # *  *  *  *  *  command to be executed
 #
-----------------------------------------------------------------------------------------------------------------------------------------------------
+----
 
 Some helpful commands when trying out gammu
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--------------------------------------------------------------------------------------------------
+----
 # waiting for PIN?
 > gammu getsecuritystatus
 
@@ -132,7 +132,7 @@ Some helpful commands when trying out gammu
 
 # send USSD code (to check sim card balance etc.) - I never got this to work with my USB dongle::
 > gammu -c ${HOME}/.gammurc.cfg getussd '*100#'
--------------------------------------------------------------------------------------------------
+----
 
 Screenshots of one of my boxes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,11 +156,12 @@ How to install a python module
 For the reference, here's how to install an additional python module
 (like pytz or rpi.gpio or psutil if not already available):
 
-----------------------------------------------------------------------------
+----
 # install python development headers required by some packages (e.g. psutil)
 > sudo apt-get install python-dev
 # install python-pip using the package manager
 > sudo apt-get install python-pip
 # then simply install the target module, e.g. pytz:
 > sudo pip install pytz
-----------------------------------------------------------------------------
+----
+
