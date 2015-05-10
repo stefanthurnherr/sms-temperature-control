@@ -72,7 +72,8 @@ if __name__ == "__main__":
         time.sleep(intervalSeconds)
         ps.set_status_off()
         print("  set to off - value now is {0}".format(ps.get_status_string()))
-        time.sleep(intervalSeconds)
+        if iteration < max_iteration:
+            time.sleep(intervalSeconds)
         iteration = iteration + 1
 
     ps.tear_down()
