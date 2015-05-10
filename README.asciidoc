@@ -140,9 +140,9 @@ Ideas to be implemented in the future
 
 * Warn administrator if balance falls below (configurable) threshold
 (for prepaid SIM cards)
-* Use a .lock file to prevent process_sms.py script from running twice
-(if run takes longer than configured crontab interval)
 * Configurable timer function for switching relays on/off
+* Add support for remote-controlled relay (TellStick? z-wave?) to be able to 
+physically separate 5V circuit from 230V circuit. This would increase safety.
 
 How to install a python module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
