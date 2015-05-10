@@ -49,6 +49,7 @@ see your relay specification
 > sudo apt-get autoremove -y x11-common omxplayer scratch dillo xpdf
 > sudo apt-get autoremove -y galculator netsurf-common netsurf-gtk
 > sudo apt-get autoremove -y lxde-common lxde-icon-theme lxterminal hicolor-icon-theme 
+> sudo apt-get autoremove -y lxpanel lxpanel-data
 > sudo apt-get autoremove -y
 # finally clear the apt cache from all downloaded .deb packages
 > sudo apt-get clean   
