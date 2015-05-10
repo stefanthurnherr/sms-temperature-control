@@ -7,8 +7,7 @@ v1.0, 2014-08-01
 How to get started
 ------------------
 
-Required hardware
-~~~~~~~~~~~~~~~~~
+=== Required hardware
 
 * Raspberry Pi with an SD card (I recommend 8GB) and running raspbian
 image
