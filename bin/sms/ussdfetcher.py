@@ -30,21 +30,33 @@ class UssdFetcher(object):
     def __remove_zero_padding_from_reply_raw(self, reply_raw):
         padded_unicode = self.convert_reply_raw_to_unicode(reply_raw)
         unpadded_unicode = padded_unicode.replace('\0', '')
-        return self.convert_reply_unicode_to_raw(unpadded_unicode)
+        return self.__convert_reply_unicode_to_raw(unpadded_unicode)
 
  
     def convert_reply_raw_to_unicode(self, reply_raw):
         if reply_raw is None:
             return reply_raw
-        reply_unicode = reply_raw.decode('hex').decode(self.reply_encoding)
-        return reply_unicode
+        elif self.__is_hex_encoded_string(reply_raw):
+            reply_unicode = reply_raw.decode('hex').decode(self.reply_encoding)
+            return reply_unicode
+        else:
+            return reply_raw
 
 
-    def convert_reply_unicode_to_raw(self, reply_unicode):
+    def __convert_reply_unicode_to_raw(self, reply_unicode):
         if reply_unicode is None:
             return return_unicode
         reply_raw = reply_unicode.encode(self.reply_encoding).encode('hex')
         return reply_raw
+
+
+    def __is_hex_encoded_string(self, input_string):
+        try:
+            int(input_string, 16)
+            return True
+        except ValueError:
+            return False
+
 
 
 if __name__ == "__main__":
