@@ -117,6 +117,9 @@ usbserial
 
 [source,shell]
 ----
+# gammu version and supported features
+> gammu features
+
 # waiting for PIN?
 > gammu getsecuritystatus
 
@@ -125,6 +128,9 @@ usbserial
 
 # phone info
 > gammu identify
+
+# cell network info
+> gammu networkinfo
 
 # send sms
 > echo "sms content" | gammu sendsms TEXT +1234567890 # mobile number in international format
