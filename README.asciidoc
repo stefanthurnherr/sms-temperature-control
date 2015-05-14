@@ -65,9 +65,10 @@ see your relay specification
 
 # if you want to use an USB Ethernet adapter to connect to the RPi
 #  (for updating, configuring, debugging etc), then
-#  ensure that you have the following lines in /etc/network/interfaces :
-# allow-hotplug ethX
-# iface ethX inet dhcp 
+#  ensure that you have the following lines (and no other lines
+#  relating to interface eth1) in /etc/network/interfaces :
+# allow-hotplug eth1
+# iface eth1 inet dhcp 
 
 # Enable 1-wire support (for DS18B20 temperature sensor):
 #  For newer kernels >= 3.18.5):
