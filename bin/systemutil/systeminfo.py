@@ -11,6 +11,12 @@ def get_last_reboot_date_time():
 
 
 def get_uptime_seconds():
+    uptime_stdout = __get_cmd_stdout(['less', '/proc/uptime'])
+    uptime_seconds = uptime_stdout.split(' ')[0]
+    return float(uptime_seconds)
+
+
+def get_uptime_seconds():
     with open('/proc/uptime', 'r') as f:
         return int(float(f.readline().split()[0]))
 
@@ -86,6 +92,8 @@ if __name__ == "__main__":
 
     pgrep_pids = get_pgrep_pids("python .*" + os.path.basename(__file__) + "\\\'")
     print("PIDs running this script: {}".format(pgrep_pids))
+
+    print("System uptime (seconds): {}".format(get_uptime_seconds()))
 
     print("Bye.")
 
