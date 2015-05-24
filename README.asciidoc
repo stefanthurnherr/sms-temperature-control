@@ -148,6 +148,7 @@ box: image:/screenshots/readme-closedbox.jpg[ScreenShot]
 
 == Ideas to be implemented in the future
 
+* make OS run fsck upon every boot (and maybe force boot once every week?)
 * Warn administrator if balance falls below (configurable) threshold
 (for prepaid SIM cards)
 * Configurable timer function for switching relays on/off
