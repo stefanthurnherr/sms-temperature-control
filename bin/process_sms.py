@@ -51,6 +51,13 @@ class TemperatureController(object):
         self.config['systemDatetimeMaxDiffNoUpdateSeconds'] = config_parser.getint('SmsProcessing', 'system_datetime_max_diff_no_update_seconds')
 
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
+        
+        rebootIntervalDaysString = config_parser.get('System', 'reboot_interval_days')
+        if rebootIntervalDaysString:
+            rebootIntervalDays = int(rebootIntervalDaysString)
+        else:
+            rebootIntervalDays = 0
+        self.config['rebootIntervalDays'] = rebootIntervalDays
 
 
     def run(self):
@@ -102,10 +109,13 @@ class TemperatureController(object):
                 os.remove(errors_file) if os.path.isfile(errors_file) else None
                 os.remove(errors_threshold_file) if os.path.isfile(errors_threshold_file) else None
 
-            if not reboot_scheduled and False:
-                #uptime_seconds = systeminfo.get_uptime_seconds()
-                #if uptime_seconds > reboot_interval_seconds:
-                debug("uptime exceeds max uptime interval - rebooting now.")
+            reboot_interval_days = self.config['rebootIntervalDays']
+            if not reboot_scheduled and reboot_interval_days > 0:
+                max_uptime_seconds = reboot_interval_days * 24 * 60 * 60
+                uptime_seconds = systeminfo.get_uptime_seconds()
+                if uptime_seconds > max_uptime_seconds:
+                    debug("current uptime {} exceeds max configured uptime {}, scheduling reboot.".format(uptime_seconds, max_uptime_seconds))
+                    subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
 
 
     def __read_file_and_parse_first_int(self, f):
