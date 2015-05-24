@@ -67,6 +67,8 @@ class TemperatureController(object):
         #    debug("error occurred while trying to process sms: " + sys.exc_info()[0])
         
         finally:
+            reboot_scheduled = False
+ 
             if sms_processing_error:
                 current_reboot_threshold = 4 #first forced reboot after this number of successive gammu errors
                 schedule_reboot = False
@@ -92,12 +94,18 @@ class TemperatureController(object):
                 if schedule_reboot:
                     with open(errors_threshold_file, 'w') as f:
                         self.__write_int_to_file(f, next_reboot_threshold) 
+                    reboot_scheduled = True
                     return_code = subprocess.call(['/usr/bin/sudo', '/sbin/shutdown', '-r', 'now'], bufsize=-1, stderr=subprocess.STDOUT)
                     debug("reboot scheduled (return code:{}), next gammu error threshold is {} ...".format(return_code, next_reboot_threshold))
 
             else:
                 os.remove(errors_file) if os.path.isfile(errors_file) else None
                 os.remove(errors_threshold_file) if os.path.isfile(errors_threshold_file) else None
+
+            if not reboot_scheduled and False:
+                #uptime_seconds = systeminfo.get_uptime_seconds()
+                #if uptime_seconds > reboot_interval_seconds:
+                debug("uptime exceeds max uptime interval - rebooting now.")
 
 
     def __read_file_and_parse_first_int(self, f):
