@@ -52,12 +52,7 @@ class TemperatureController(object):
 
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
         
-        rebootIntervalDaysString = config_parser.get('System', 'reboot_interval_days')
-        if rebootIntervalDaysString:
-            rebootIntervalDays = int(rebootIntervalDaysString)
-        else:
-            rebootIntervalDays = 0
-        self.config['rebootIntervalDays'] = rebootIntervalDays
+        self.config['rebootIntervalDays'] = config_parser.getint('System', 'reboot_interval_days')
 
 
     def run(self):

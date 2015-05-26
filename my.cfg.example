@@ -2,8 +2,9 @@
 work_dir=/home/pi/sms-temperature-control/work
 log_dir=/home/pi/sms-temperature-control/log
 #
-#If set, will force reboot if uptime exceeds specified number of days
-reboot_interval_days=
+#If set to value greater than zero, will force reboot if uptime exceeds specified
+# number of days. Set to zero to disable automatic periodic rebooting.
+reboot_interval_days=0
 
 [Phone]
 #Will be used to prevent SMS loops (accidentally sending SMS to itself). Matching
