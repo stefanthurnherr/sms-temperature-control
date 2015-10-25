@@ -26,11 +26,20 @@ class TemperatureKeeper(object):
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
         self.config['logDir'] = log_dir
+
+        self.config['enabled'] = config_parser.getboolean('TemperatureAutocontrol', 'enabled')
+
+        self.config['switchOnTemperature'] = config_parser.getfloat('TemperatureAutocontrol', 'switch_on_temperature')
+        self.config['switchOffTemperature'] = config_parser.getfloat('TemperatureAutocontrol', 'switch_off_temperature')
     
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
 
  
     def run(self):
+        if not self.config['enabled']:
+            debug("Temperature autocontrol disabled.")
+            return
+
         temp_raw = temperaturereader.read_celsius()
         if temp_raw: 
             temp = round(temp_raw, 1)

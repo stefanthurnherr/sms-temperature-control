@@ -52,3 +52,12 @@ system_datetime_max_diff_no_update_seconds=300
 [PowerSwitching]
 # The GPIO IDs that have relays connected (comma-separated list).
 relay_gpio_channels=22,23
+
+[TemperatureAutocontrol]
+# Automatically keep the temperature within the configured range, switching the
+#  power on if the temperature falls below the lower bound, and switching if off
+#  when the temperature exceeds the upper bound.
+enabled=on
+switch_on_temperature=4.5
+switch_off_temperature=9.6
+
