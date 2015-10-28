@@ -20,6 +20,7 @@ class TemperatureKeeper(object):
 
     def __init__(self, config_parser):
         self.config = {}
+        self.config_parser = config_parser
 
         log_dir_raw = config_parser.get('System', 'log_dir')
         log_dir = os.path.abspath(log_dir_raw)
@@ -28,12 +29,20 @@ class TemperatureKeeper(object):
         self.config['logDir'] = log_dir
 
         self.config['enabled'] = config_parser.getboolean('TemperatureAutocontrol', 'enabled')
-
-        self.config['switchOnTemperature'] = config_parser.getfloat('TemperatureAutocontrol', 'switch_on_temperature')
-        self.config['switchOffTemperature'] = config_parser.getfloat('TemperatureAutocontrol', 'switch_off_temperature')
-    
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
 
+    def get_switch_on_temperature(self):
+        return self.config_parser.getfloat('TemperatureAutocontrol', 'switch_on_temperature')
+
+    def get_switch_off_temperature(self):
+        return self.config_parser.getfloat('TemperatureAutocontrol', 'switch_off_temperature')
+
+    def set_on_off_temperatures(self, switchOnTemperature, switchOffTemperature) {
+        float(switchOnTemperature)
+        float(switchOffTemperature)
+        self.config_parser.set('TemperatureAutocontrol', 'switch_on_temperature', str(switchOnTemperature))
+        self.config_parser.set('TemperatureAutocontrol', 'switch_off_temperature', str(switchOffTemperature))
+    }
  
     def run(self):
         if not self.config['enabled']:
