@@ -189,15 +189,26 @@ class TemperatureController(object):
                     switch_on_temperature = float(parts[2])
                     switch_off_temperature = float(parts[3])
                     temperature_keeper = TemperatureKeeper(config_parser)
+
+                    switch_on_temp = temperature_keeper.get_switch_on_temperature()
+                    switch_off_temp = temperature_keeper.get_switch_off_temperature()
+                    current_temp_raw = temperaturereader.read_celsius()
+                    if current_temp_raw: 
+                        current_temp = round(current_temp_raw, 1)
+                        debug("  responding with updated temperature interval {0} - {1}, current temperature: {2} Celsius.".format(switch_on_temp, switch_off_temp, current_temp))
+                        response_message = u'Hi! Successfully set temperature interval to {0} - {1}. Current temperature is {2}.'.format(switch_on_temp, switch_off_temp, current_temp)
+                    else:
+                        debug("  responding with updated temperature interval {0} - {1}, current temperature could not be read.".format(switch_on_temp, switch_off_temp))
+                        response_message = u'Hi! Successfully set temperature interval to {0} - {1}. Current temperature could not be read.'.format(switch_on_temp, switch_off_temp)
+
                     success = True
             except:
                 # silently ignore
                 success = False 
 
             if not success:
+                debug("  couldnt understand 'temp set' message, responding with help message.")
                 response_message = u'Hi! Didnt understand your message, use "temp set 4 12" to enable power between 4 and 12 degrees.'
-
-
 
         elif sender_message_raw and sender_message_raw.lower().startswith('temp'):
             temp_raw = temperaturereader.read_celsius()
