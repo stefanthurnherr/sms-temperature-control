@@ -10,7 +10,7 @@ import subprocess
 import ConfigParser
 import gammu # for exception handling only
 
-from temp import temperaturereader
+from temp import temperaturereader,temperaturekeeper
 from sms import SmsFetcher
 from sms import SmsSender
 from sms import UssdFetcher
@@ -181,7 +181,25 @@ class TemperatureController(object):
         
         response_message = None
         
-        if sender_message_raw and sender_message_raw.lower().startswith('temp'):
+        if sender_message_raw and sender_message_raw.lower().startswith('temp set '):
+            parts = sender_message_raw.split(None, 5)
+            success = False
+            try:
+                if len(parts) >= 4:
+                    switch_on_temperature = float(parts[2])
+                    switch_off_temperature = float(parts[3])
+                    temperature_keeper = TemperatureKeeper(config_parser)
+                    success = True
+            except:
+                # silently ignore
+                success = False 
+
+            if not success:
+                response_message = u'Hi! Didnt understand your message, use "temp set 4 12" to enable power between 4 and 12 degrees.'
+
+
+
+        elif sender_message_raw and sender_message_raw.lower().startswith('temp'):
             temp_raw = temperaturereader.read_celsius()
             if temp_raw: 
                 temp = round(temp_raw, 1)
