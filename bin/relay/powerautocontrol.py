@@ -16,7 +16,7 @@ from relay import PowerSwitcher
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-class TemperatureKeeper(object):
+class PowerAutocontroller(object):
 
     def __init__(self, config_parser):
         self.config = {}
@@ -44,18 +44,17 @@ class TemperatureKeeper(object):
         self.config_parser.set('PowerAutocontrol', 'switch_off_temperature', str(switchOffTemperature))
     }
  
-    def run(self):
+    def run(self, currentTemperature):
         if not self.config['enabled']:
             debug("Power autocontrol disabled, aborting.")
             return
 
-        temp_raw = temperaturereader.read_celsius()
-        if temp_raw: 
-            temp = round(temp_raw, 1)
-            debug("  responding with temperature: {} Celsius.".format(temp))
+        lower_bound = get_switch_on_temperature()
+        upper_bound = get_switch_off_temperature()
+        if currentTemperature > upper_bound or currentTemperature < lower_bound:
+            debug("  current temperature {0} is outside configured interval [{1},{2}], switching power OFF...".format(currentTemperature, lower_bound, upper_bound))
         else:
-            debug("  temperature could not be read.")
-            response_message = u'Hi! Temperature sensor is offline, check log files.'    
+            debug("  current temperature {0} is within configured interval [{1},{2}], switching power ON...".format(currentTemperature, lower_bound, upper_bound))
 
 
 # ------------------------------------------------------------------------------- #
@@ -73,7 +72,7 @@ def test():
     config_parser = ConfigParser.SafeConfigParser()
     config_parser.read('/home/pi/sms-temperature-control/my.cfg')
 
-    tk = TemperatureKeeper(config_parser)
+    poc = PowerAutocontroller(config_parser)
 
 
 if __name__ == '__main__':
@@ -91,10 +90,10 @@ if __name__ == '__main__':
         if len(pgrep_pids) < 1:
             debug("pgrep pattern wrong, my own script process not found: {}".format(pgrep_pattern))
         elif len(pgrep_pids) == 1 and pgrep_pids[0] == os.getpid():
-            debug("START no other pid found for this script (PID: {}), going ahead with ensuring minimum temperature...".format(pgrep_pids))
-            temperature_keeper = TemperatureKeeper(config_parser)
-            temperature_keeper.run()
-            debug("DONE ensuring minimum temperature.")
+            debug("START no other pid found for this script (PID: {}), going ahead with running power autocontroller...".format(pgrep_pids))
+            power_autocontroller = PowerAutocontroller(config_parser)
+            power_autocontroller.run()
+            debug("DONE running power autocontroller.")
         else:
             debug("Found other processes already running this script (PIDs: {}), skipping this script run.".format(pgrep_pids))
 
