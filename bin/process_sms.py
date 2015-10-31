@@ -10,11 +10,11 @@ import subprocess
 import ConfigParser
 import gammu # for exception handling only
 
-from temp import temperaturereader,temperaturekeeper
+from temp import temperaturereader
 from sms import SmsFetcher
 from sms import SmsSender
 from sms import UssdFetcher
-from relay import PowerSwitcher
+from relay import PowerSwitcher,PowerAutocontroller
 from systemutil import systeminfo
 
 
@@ -191,10 +191,10 @@ class TemperatureController(object):
                 if len(parts) >= 2:
                     switch_on_temperature = float(parts[0])
                     switch_off_temperature = float(parts[1])
-                    temperature_keeper = TemperatureKeeper(config_parser)
+                    power_autocontroller = PowerAutocontroller(config_parser)
 
-                    switch_on_temp = temperature_keeper.get_switch_on_temperature()
-                    switch_off_temp = temperature_keeper.get_switch_off_temperature()
+                    switch_on_temp = power_autocontroller.get_switch_on_temperature()
+                    switch_off_temp = power_autocontroller.get_switch_off_temperature()
                     current_temp_raw = temperaturereader.read_celsius()
                     if current_temp_raw: 
                         current_temp = round(current_temp_raw, 1)
