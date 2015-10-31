@@ -199,10 +199,15 @@ class TemperatureController(object):
             message_payload = sender_message_raw[len('power autocontrol '):]
             parts = message_payload.split(None, 3)
             success = False
-            try:
-                if len(parts) >= 2:
-                    switch_on_temperature = float(parts[0])
-                    switch_off_temperature = float(parts[1])
+            if len(parts) >= 2:
+                try:
+                    switch_on_temperature = float(parts[0].replace(',', '.'))
+                    switch_off_temperature = float(parts[1].replace(',', '.'))
+                except Exception as e:
+                    # silently ignore, reply with help message
+                    debug("  exception occurred while trying to convert supplied args to float number, ignoring")
+
+                else:
                     pac = PowerAutocontroller(config_parser)
 
                     switch_on_temp_before = pac.get_switch_on_temperature()
@@ -223,9 +228,6 @@ class TemperatureController(object):
                         response_message = u'Hi! Successfully set temperature interval to [{0} - {1}]. Current temperature could not be read.'.format(switch_on_temp_after, switch_off_temp_after)
 
                     success = True
-            except:
-                # silently ignore, reply with help message
-                success = False 
 
             if not success:
                 debug("  couldnt understand 'power autocontrol' message, responding with help message.")
