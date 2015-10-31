@@ -255,7 +255,7 @@ class TemperatureController(object):
                 debug("  power switching not requested/allowed (manual switching allowed? {})".format(manual_switching_allowed))
 
             power_status = powerswitcher.get_status_string()
-            debug("  responding with power status: {} (was: {}).".format(power_status, power_status_before))
+            debug("  responding with power status: {1} (was: {0}).".format(power_status_before, power_status))
             if requested_state and not manual_switching_allowed:
                 response_message = u'Hi! Power autocontrol is enabled, cannot switch power manually (currently {0}).'.format(power_status)
             elif requested_state:
