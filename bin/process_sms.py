@@ -241,7 +241,9 @@ class TemperatureController(object):
             elif manual_switching_allowed and requested_state and requested_state == 'OFF':
                 powerswitcher.set_status_off()
                 debug("  power has been set OFF")
-        
+            else: 
+                debug("  power switching not requested/allowed (manual switching allowed? {})".format(manual_switching_allowed))
+
             power_status = powerswitcher.get_status_string()
             debug("  responding with power status: {} (was: {}).".format(power_status, power_status_before))
             if requested_state and not manual_switching_allowed:
