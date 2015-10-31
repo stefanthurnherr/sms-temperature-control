@@ -221,11 +221,11 @@ class TemperatureController(object):
                     
                     if current_temp_raw: 
                         current_temp = round(current_temp_raw, 1)
-                        debug("  responding with updated temperature interval [{2} - {3}] (was: [{0} - {1}]), current temperature: {4} Celsius.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after, current_temp))
-                        response_message = u'Hi! Successfully set temperature interval to [{0} - {1}]. Current temperature is {2}.'.format(switch_on_temp_after, switch_off_temp_after, current_temp)
+                        debug("  responding with updated temperature interval [{2}:{3}] (was: [{0}:{1}]), current temperature: {4} Celsius.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after, current_temp))
+                        response_message = u'Hi! Successfully set temperature interval to [{0}:{1}]. Current temperature is {2}.'.format(switch_on_temp_after, switch_off_temp_after, current_temp)
                     else:
-                        debug("  responding with updated temperature interval [{2} - {3}] (was: [{0} - {1}]), current temperature could not be read.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after))
-                        response_message = u'Hi! Successfully set temperature interval to [{0} - {1}]. Current temperature could not be read.'.format(switch_on_temp_after, switch_off_temp_after)
+                        debug("  responding with updated temperature interval [{2}:{3}] (was: [{0}:{1}]), current temperature could not be read.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after))
+                        response_message = u'Hi! Successfully set temperature interval to [{0}:{1}]. Current temperature could not be read.'.format(switch_on_temp_after, switch_off_temp_after)
 
                     success = True
 

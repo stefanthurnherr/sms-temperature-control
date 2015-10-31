@@ -51,17 +51,17 @@ class PowerAutocontroller(object):
         power_status_before = powerswitcher.get_status_string()
 
         if powerswitcher.is_status_on() and currentTemperature > upper_bound:
-            debug("  current temperature {0} is greater than upper bound of [{1},{2}], switching power OFF ...".format(currentTemperature, lower_bound, upper_bound))
+            debug("  current temperature {0} is greater than upper bound of [{1}:{2}], switching power OFF ...".format(currentTemperature, lower_bound, upper_bound))
             powerswitcher.set_status_off()
             power_status_after = powerswitcher.get_status_string()
             debug("  power is now {1} (was: {0})".format(power_status_before, power_status_after))
         elif powerswitcher.is_status_off() and currentTemperature < lower_bound:
-            debug("  current temperature {0} is less than lower bound of [{1},{2}], switching power ON ...".format(currentTemperature, lower_bound, upper_bound))
+            debug("  current temperature {0} is less than lower bound of [{1}:{2}], switching power ON ...".format(currentTemperature, lower_bound, upper_bound))
             powerswitcher.set_status_on()
             power_status_after = powerswitcher.get_status_string()
             debug("  power is now {1} (was: {0})".format(power_status_before, power_status_after))
         else:
-            debug("  current temperature {0}, configured interval [{1},{2}], power is {3}: no action required".format(currentTemperature, lower_bound, upper_bound, power_status_before))
+            debug("  current temperature {0}, configured interval [{1}:{2}], power is {3}: no action required".format(currentTemperature, lower_bound, upper_bound, power_status_before))
 
 
 
