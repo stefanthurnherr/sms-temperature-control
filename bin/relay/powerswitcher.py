@@ -28,7 +28,7 @@ class PowerSwitcher(object):
 
 
     def is_status_on(self):
-        return bool(self.__get_status() == 0)
+        return self.__get_status() == 0
 
  
     def get_status_string(self):
