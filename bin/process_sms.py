@@ -324,7 +324,7 @@ class TemperatureController(object):
             with open(balance_file, 'w') as f:
                 if reply_raw is not None:
                     f.write(reply_raw)
-            debug("done.")
+            debug("done, USSD reply was '{}'."format(reply_raw))
 
 
     def __get_cached_balance_info(self, short=False):

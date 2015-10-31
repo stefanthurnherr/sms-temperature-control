@@ -46,5 +46,5 @@ if __name__ == '__main__':
             debug("Found other processes already running this script (PIDs: {}), skipping this script run.".format(pgrep_pids))
 
     else:
-        debug("Uptime ({0} seconds) is less than {1} seconds, skipping ensuring minimum temperature.".format(uptime, uptime_threshold))
+        debug("Uptime ({0} seconds) is less than {1} seconds, skipping power autocontrolling.".format(uptime, uptime_threshold))
 
