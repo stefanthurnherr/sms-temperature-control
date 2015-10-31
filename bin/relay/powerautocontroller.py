@@ -2,17 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import re
-from datetime import datetime,timedelta
-import time
 import os
-import subprocess
 import ConfigParser
 
 from relay import PowerSwitcher
-
-
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class PowerAutocontroller(object):
@@ -46,15 +39,26 @@ class PowerAutocontroller(object):
  
     def run(self, currentTemperature):
         if not self.config['enabled']:
-            debug("Power autocontrol disabled, aborting.")
+            debug("  power autocontrol disabled by configuration, aborting.")
             return
 
         lower_bound = get_switch_on_temperature()
         upper_bound = get_switch_off_temperature()
+
+        gpio_channels = [int(channel) for channel in self.config['relayGpioChannels'].split(',')]
+
+        powerswitcher = PowerSwitcher(gpio_channels=gpio_channels)
+        power_status_before = powerswitcher.get_status_string()
+
         if currentTemperature > upper_bound or currentTemperature < lower_bound:
-            debug("  current temperature {0} is outside configured interval [{1},{2}], switching power OFF...".format(currentTemperature, lower_bound, upper_bound))
+            debug("  current temperature {0} is outside configured interval [{1},{2}], ensuring power is switched OFF ...".format(currentTemperature, lower_bound, upper_bound))
+            powerswitcher.set_status_off()
         else:
-            debug("  current temperature {0} is within configured interval [{1},{2}], switching power ON...".format(currentTemperature, lower_bound, upper_bound))
+            debug("  current temperature {0} is within configured interval [{1},{2}], ensuring power is switched ON ...".format(currentTemperature, lower_bound, upper_bound))
+            powerswitcher.set_status_on()
+
+        power_status_after = powerswitcher.get_status_string()
+        debug("  power is now {1} (was: {0})".format(power_status_before, power_status_after))
 
 
 # ------------------------------------------------------------------------------- #
