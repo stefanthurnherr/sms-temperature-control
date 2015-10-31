@@ -9,7 +9,6 @@ import os
 import subprocess
 import ConfigParser
 
-from temp import temperaturereader
 from relay import PowerSwitcher
 
 
