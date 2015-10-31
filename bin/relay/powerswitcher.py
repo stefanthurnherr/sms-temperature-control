@@ -20,7 +20,7 @@ class PowerSwitcher(object):
         for channel_id in gpio_channels: 
             GPIO.setup(channel_id, GPIO.OUT)
         
-        self.set_status_off()
+        #self.set_status_off()
 
 
     def is_status_off(self):
