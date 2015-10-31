@@ -28,25 +28,25 @@ class TemperatureKeeper(object):
             os.makedirs(log_dir)
         self.config['logDir'] = log_dir
 
-        self.config['enabled'] = config_parser.getboolean('TemperatureAutocontrol', 'enabled')
+        self.config['enabled'] = config_parser.getboolean('PowerAutocontrol', 'enabled')
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
 
     def get_switch_on_temperature(self):
-        return self.config_parser.getfloat('TemperatureAutocontrol', 'switch_on_temperature')
+        return self.config_parser.getfloat('PowerAutocontrol', 'switch_on_temperature')
 
     def get_switch_off_temperature(self):
-        return self.config_parser.getfloat('TemperatureAutocontrol', 'switch_off_temperature')
+        return self.config_parser.getfloat('PowerAutocontrol', 'switch_off_temperature')
 
     def set_on_off_temperatures(self, switchOnTemperature, switchOffTemperature) {
         float(switchOnTemperature)
         float(switchOffTemperature)
-        self.config_parser.set('TemperatureAutocontrol', 'switch_on_temperature', str(switchOnTemperature))
-        self.config_parser.set('TemperatureAutocontrol', 'switch_off_temperature', str(switchOffTemperature))
+        self.config_parser.set('PowerAutocontrol', 'switch_on_temperature', str(switchOnTemperature))
+        self.config_parser.set('PowerAutocontrol', 'switch_off_temperature', str(switchOffTemperature))
     }
  
     def run(self):
         if not self.config['enabled']:
-            debug("Temperature autocontrol disabled.")
+            debug("Power autocontrol disabled, aborting.")
             return
 
         temp_raw = temperaturereader.read_celsius()

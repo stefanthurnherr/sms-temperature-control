@@ -53,6 +53,8 @@ class TemperatureController(object):
         self.config['relayGpioChannels'] = config_parser.get('PowerSwitching', 'relay_gpio_channels')
         
         self.config['rebootIntervalDays'] = config_parser.getint('System', 'reboot_interval_days')
+        
+        self.config['powerAutocontrolEnabled'] = config_parser.getboolean('PowerAutocontrol', 'enabled')
 
 
     def run(self):
@@ -181,13 +183,14 @@ class TemperatureController(object):
         
         response_message = None
         
-        if sender_message_raw and sender_message_raw.lower().startswith('temp set '):
-            parts = sender_message_raw.split(None, 5)
+        if sender_message_raw and sender_message_raw.lower().startswith('power autocontrol '):
+            message_payload = sender_message_raw[len('power autocontrol '):]
+            parts = message_payload.split(None, 3)
             success = False
             try:
-                if len(parts) >= 4:
-                    switch_on_temperature = float(parts[2])
-                    switch_off_temperature = float(parts[3])
+                if len(parts) >= 2:
+                    switch_on_temperature = float(parts[0])
+                    switch_off_temperature = float(parts[1])
                     temperature_keeper = TemperatureKeeper(config_parser)
 
                     switch_on_temp = temperature_keeper.get_switch_on_temperature()
@@ -203,12 +206,12 @@ class TemperatureController(object):
 
                     success = True
             except:
-                # silently ignore
+                # silently ignore, reply with help message
                 success = False 
 
             if not success:
-                debug("  couldnt understand 'temp set' message, responding with help message.")
-                response_message = u'Hi! Didnt understand your message, use "temp set 4 12" to enable power between 4 and 12 degrees.'
+                debug("  couldnt understand 'power autocontrol' message, responding with help message.")
+                response_message = u'Hi! Didnt understand your message, use "power autocontrol 4 12" to enable power between 4 and 12 degrees.'
 
         elif sender_message_raw and sender_message_raw.lower().startswith('temp'):
             temp_raw = temperaturereader.read_celsius()
@@ -221,23 +224,29 @@ class TemperatureController(object):
                 response_message = u'Hi! Temperature sensor is offline, check log files.'
         
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
-            requested_state = ''
             gpio_channels = [int(channel) for channel in self.config['relayGpioChannels'].split(',')]
             powerswitcher = PowerSwitcher(gpio_channels=gpio_channels)
             power_status_before = powerswitcher.get_status_string()
+
+            requested_state = ''
             if sender_message_raw.lower().startswith('power on'):
                 requested_state = 'ON'
-                powerswitcher.set_status_on()
-                debug("  power has been set ON")
             elif sender_message_raw.lower().startswith('power off'):
                 requested_state = 'OFF'
+
+            manual_switching_allowed = not self.config['powerAutocontrolEnabled']
+            if manual_switching_allowed and requested_state and requested_state == 'ON':
+                powerswitcher.set_status_on()
+                debug("  power has been set ON")
+            elif manual_switching_allowed and requested_state and requested_state == 'OFF':
                 powerswitcher.set_status_off()
                 debug("  power has been set OFF")
         
             power_status = powerswitcher.get_status_string()
-            
             debug("  responding with power status: {} (was: {}).".format(power_status, power_status_before))
-            if requested_state:
+            if requested_state and not manual_switching_allowed:
+                response_message = u'Hi! Power autocontrol is enabled, cannot switch power manually (currently {0}).'.format(power_status)
+            elif requested_state:
                 response_message = u'Hi! Power has been switched {0}, was {1} ({2}).'.format(power_status, power_status_before, now_string)
             else:
                 response_message = u'Hi! Power is currently {0} ({1}).'.format(power_status, now_string)
