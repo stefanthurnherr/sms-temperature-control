@@ -36,12 +36,11 @@ class PowerAutocontroller(object):
     def get_switch_off_temperature(self):
         return self.config_parser.getfloat('PowerAutocontrol', 'switch_off_temperature')
 
-    def set_on_off_temperatures(self, switchOnTemperature, switchOffTemperature) {
+    def set_on_off_temperatures(self, switchOnTemperature, switchOffTemperature):
         float(switchOnTemperature)
         float(switchOffTemperature)
         self.config_parser.set('PowerAutocontrol', 'switch_on_temperature', str(switchOnTemperature))
         self.config_parser.set('PowerAutocontrol', 'switch_off_temperature', str(switchOffTemperature))
-    }
  
     def run(self, currentTemperature):
         if not self.config['enabled']:
