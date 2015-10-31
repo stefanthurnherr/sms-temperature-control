@@ -1,1 +1,2 @@
-from .powerswitcher import PowerSwitcher,PowerAutocontroller
+from .powerswitcher import PowerSwitcher
+from .powerautocontroller import AutoController
