@@ -22,13 +22,17 @@ class PowerSwitcher(object):
         
         self.set_status_off()
 
+
+    def is_status_off(self):
+        return not self.is_status_on()
+
+
+    def is_status_on(self):
+        return bool(self.__get_status() == 0)
+
  
     def get_status_string(self):
-        power_status = self.__get_status()
-        if power_status == 1:
-            return 'OFF'
-        else:
-            return 'ON'
+        return 'ON' if self.is_status_on() else 'OFF'
 
 
     def set_status_on(self):
