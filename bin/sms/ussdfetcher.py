@@ -14,17 +14,24 @@ class UssdFetcher(object):
     def fetch_ussd_reply_raw(self, ussd):
         config_file = self.gammu_config_file
         config_section = self.gammu_config_section
-        response = subprocess.check_output(['gammu', '-c', config_file, '-s', config_section, 'getussd', ussd])
-        #print("got service reply line:{}".format(response))
+        response_bytestring = subprocess.check_output(['gammu', '-c', config_file, '-s', config_section, 'getussd', ussd])
+        #print("got service reply line:{}".format(response_bytestring))
+        #response = response_bytestring.decode('utf8')
+        response = self.__remove_non_asciis(response_bytestring)
         if u'Service reply' in response:
             for line_raw in response.splitlines():
                 #print("got service reply line:{}".format(line_raw))
+                #print("  got service reply line") 
                 line = line_raw.strip() #remove trailing newline if applicable
                 if line.startswith(u'Service reply'):
                     service_reply_raw = line[line.find('"')+1:-1]
                     #return self.__remove_zero_padding_from_reply_raw(service_reply_raw)
                     return service_reply_raw
         return None
+
+
+    def __remove_non_asciis(self, s):
+        return "".join(map(lambda x: x if ord(x)<128 else '?', s))
 
 
     def __remove_zero_padding_from_reply_raw(self, reply_raw):
