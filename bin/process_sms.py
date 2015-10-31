@@ -20,6 +20,8 @@ from systemutil import systeminfo
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+CONFIG_FILEPATH = '/home/pi/sms-temperature-control/my.cfg'
+
 
 class TemperatureController(object):
 
@@ -183,7 +185,17 @@ class TemperatureController(object):
         
         response_message = None
         
-        if sender_message_raw and sender_message_raw.lower().startswith('power autocontrol '):
+        if sender_message_raw and sender_message_raw.lower().startswith('temp'):
+            temp_raw = temperaturereader.read_celsius()
+            if temp_raw: 
+                temp = round(temp_raw, 1)
+                debug("  responding with temperature: {} Celsius.".format(temp))
+                response_message = u'Hi! Current temperature here is {0} Celsius ({1}).'.format(temp, now_string)
+            else:
+                debug("  temperature could not be read.")
+                response_message = u'Hi! Temperature sensor is offline, check log files.'
+        
+        elif sender_message_raw and sender_message_raw.lower().startswith('power autocontrol '):
             message_payload = sender_message_raw[len('power autocontrol '):]
             parts = message_payload.split(None, 3)
             success = False
@@ -191,18 +203,24 @@ class TemperatureController(object):
                 if len(parts) >= 2:
                     switch_on_temperature = float(parts[0])
                     switch_off_temperature = float(parts[1])
-                    power_autocontroller = PowerAutocontroller(config_parser)
+                    pac = PowerAutocontroller(config_parser)
 
-                    switch_on_temp = power_autocontroller.get_switch_on_temperature()
-                    switch_off_temp = power_autocontroller.get_switch_off_temperature()
+                    switch_on_temp_before = pac.get_switch_on_temperature()
+                    switch_off_temp_before = pac.get_switch_off_temperature()
                     current_temp_raw = temperaturereader.read_celsius()
+
+                    pac.set_switch_onoff_temperatures(CONFIG_FILEPATH, switch_on_temperature, switch_off_temperature)
+
+                    switch_on_temp_after = pac.get_switch_on_temperature()
+                    switch_off_temp_after = pac.get_switch_off_temperature()
+                    
                     if current_temp_raw: 
                         current_temp = round(current_temp_raw, 1)
-                        debug("  responding with updated temperature interval {0} - {1}, current temperature: {2} Celsius.".format(switch_on_temp, switch_off_temp, current_temp))
-                        response_message = u'Hi! Successfully set temperature interval to {0} - {1}. Current temperature is {2}.'.format(switch_on_temp, switch_off_temp, current_temp)
+                        debug("  responding with updated temperature interval [{2} - {3}] (was: [{0} - {1}]), current temperature: {4} Celsius.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after, current_temp))
+                        response_message = u'Hi! Successfully set temperature interval to [{0} - {1}]. Current temperature is {2}.'.format(switch_on_temp_after, switch_off_temp_after, current_temp)
                     else:
-                        debug("  responding with updated temperature interval {0} - {1}, current temperature could not be read.".format(switch_on_temp, switch_off_temp))
-                        response_message = u'Hi! Successfully set temperature interval to {0} - {1}. Current temperature could not be read.'.format(switch_on_temp, switch_off_temp)
+                        debug("  responding with updated temperature interval [{2} - {3}] (was: [{0} - {1}]), current temperature could not be read.".format(switch_on_temp_before, switch_off_temp_before, switch_on_temp_after, switch_off_temp_after))
+                        response_message = u'Hi! Successfully set temperature interval to [{0} - {1}]. Current temperature could not be read.'.format(switch_on_temp_after, switch_off_temp_after)
 
                     success = True
             except:
@@ -213,16 +231,6 @@ class TemperatureController(object):
                 debug("  couldnt understand 'power autocontrol' message, responding with help message.")
                 response_message = u'Hi! Didnt understand your message, use "power autocontrol 4 12" to enable power between 4 and 12 degrees.'
 
-        elif sender_message_raw and sender_message_raw.lower().startswith('temp'):
-            temp_raw = temperaturereader.read_celsius()
-            if temp_raw: 
-                temp = round(temp_raw, 1)
-                debug("  responding with temperature: {} Celsius.".format(temp))
-                response_message = u'Hi! Current temperature here is {0} Celsius ({1}).'.format(temp, now_string)
-            else:
-                debug("  temperature could not be read.")
-                response_message = u'Hi! Temperature sensor is offline, check log files.'
-        
         elif sender_message_raw and sender_message_raw.lower().startswith('power'):
             gpio_channels = [int(channel) for channel in self.config['relayGpioChannels'].split(',')]
             powerswitcher = PowerSwitcher(gpio_channels=gpio_channels)
@@ -364,7 +372,7 @@ if __name__ == '__main__':
     if uptime > uptime_threshold: # otherwise allow reboot script to run completely to clean up etc.
 
         config_parser = ConfigParser.SafeConfigParser()
-        config_parser.read('/home/pi/sms-temperature-control/my.cfg')
+        config_parser.read(CONFIG_FILEPATH)
 
         pgrep_pattern = 'python .*' + os.path.basename(__file__) + '\\\''
         pgrep_pids = systeminfo.get_pgrep_pids(pgrep_pattern)
@@ -381,3 +389,5 @@ if __name__ == '__main__':
 
     else:
         debug("Uptime ({0} seconds) is less than {1} seconds, skipping sms processing.".format(uptime, uptime_threshold))
+
+
