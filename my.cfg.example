@@ -54,10 +54,11 @@ system_datetime_max_diff_no_update_seconds=300
 relay_gpio_channels=22,23
 
 [PowerAutocontrol]
-# Automatically keep the temperature within the configured range, switching the
-#  power on if the temperature falls below the lower bound, and switching if off
-#  when the temperature exceeds the upper bound.
+# When enabled, switching power on/off manually (e.g., via sms) is not allowed.
 enabled=on
+# Automatically switch the power on/off based on whether the current temperature
+#  is within this interval.
+#  switch_on_temperature must be stricly less than switch_off_temperature.
 switch_on_temperature=4.5
 switch_off_temperature=9.6
 
