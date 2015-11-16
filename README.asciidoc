@@ -95,7 +95,9 @@ usbserial
 > cd
 > git clone git@github.com:stefanthurnherr/sms-temperature-control.git
 
-# go through config file at sms-temperature-control/my.cfg and adjust as needed
+# Create your personal configuration
+> cp sms-temperature-control/my.cfg.example sms-temperature-control/my.cfg
+# now go through sms-temperature-control/my.cfg and adjust as needed
 
 # add python script to root crontab (root is required to read/write GPIO channels)
 # sudo crontab -e
