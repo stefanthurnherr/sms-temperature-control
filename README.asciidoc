@@ -83,6 +83,10 @@ w1_therm
 # ensure that the following module is listed in /etc/modules :
 usbserial
 
+# force fsck to run upon every boot (since only way to shut down will be to cut the power)
+> sudo fdisk -l # to find out your filesystem device identifier
+> sudo tune2fs -c 1 /dev/<filesystem-device-identifier>
+
 # at this point restart if you haven't done so yet:
 > sudo shutdown -r now
 
