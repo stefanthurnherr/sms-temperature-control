@@ -44,7 +44,15 @@ class UssdFetcher(object):
         if reply_raw is None:
             return reply_raw
         elif self.__is_hex_encoded_string(reply_raw):
-            reply_unicode = reply_raw.decode('hex').decode(self.reply_encoding)
+            # Comviq SE seems to interleave the hex chars with NUL hex characters, so remove them.
+            reply_raw_cleaned = ''
+            i = 0
+            while i < len(reply_raw):
+                if i%4 > 1:
+                    reply_raw_cleaned = reply_raw_cleaned + reply_raw[i] 
+                i+=1
+            #print("cleaned then hex-decoded: {}".format(reply_raw_cleaned.decode('hex')))
+            reply_unicode = reply_raw_cleaned.decode('hex').decode(self.reply_encoding)
             return reply_unicode
         else:
             return reply_raw
